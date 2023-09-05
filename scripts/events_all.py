@@ -11,4 +11,4 @@ def count_events(root_file):
     
     return num_events
 
-count_events("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/root_files/0000/try")
+count_events("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/root_files/0000/GEN_LO_01j_102X_14.root")
