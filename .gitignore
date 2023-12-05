@@ -13,4 +13,5 @@
 *.so
 *.pcm
 *.nfs*
-
+*.xz
+*.tgz
