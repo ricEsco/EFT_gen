@@ -1,0 +1,16 @@
+*.root
+*.png
+*.gif
+*.pyc
+*.tar.gz
+*.o
+*.d
+*.log
+*.eps
+*.pdf
+.fuse_*
+*.bak
+*.so
+*.pcm
+*.nfs*
+
