@@ -219,7 +219,7 @@ def process_event(entry, histograms, relevant_pdgIds):
     top_count_aftercut400 = 0
     antitop_count_aftercut400 = 0
     
-    leptons = []
+    # leptons = []
     tops = []
     b_quarks = []
     w_bosons = []
@@ -236,6 +236,7 @@ def process_event(entry, histograms, relevant_pdgIds):
     jets_from_w_count_after400 = 0
     
     last_copy_top_decays = []
+    last_copy_partons = []
     
     events_after_LHE_HT_cut = 0
     events_after_lepton_selection = 0
@@ -257,8 +258,14 @@ def process_event(entry, histograms, relevant_pdgIds):
         status = entry.GenPart_status[i]
         statusFlags = entry.GenPart_statusFlags[i]
         
+        # Collect all last copy partons
+        if is_last_copy(statusFlags):
+            parton_4vec = ROOT.TLorentzVector()
+            parton_4vec.SetPtEtaPhiM(pt, eta, phi, mass)
+            last_copy_partons.append(parton_4vec)
+        
         # Check if particle is a top or antitop quark
-        if abs(pdgId) in relevant_pdgIds and is_last_copy(statusFlags): 
+        if abs(pdgId) in relevant_pdgIds and is_last_copy(statusFlags):  
             if abs(pdgId) == 6: 
                 
                 top_4vec = ROOT.TLorentzVector()
@@ -293,7 +300,8 @@ def process_event(entry, histograms, relevant_pdgIds):
                     # Check if W decays leptonically
                     for k in range(entry.nGenPart):
                         if entry.GenPart_genPartIdxMother[k] == w_daughter and abs(entry.GenPart_pdgId[k]) in [11, 13]:  
-    
+                            
+                            leptons = []
                             lepton_pdg = entry.GenPart_pdgId[k]
                             print('Lepton pdg:', lepton_pdg)
                             lepton_pt = entry.GenPart_pt[k]
@@ -365,12 +373,19 @@ def process_event(entry, histograms, relevant_pdgIds):
                     continue  
             else:
                 continue
-                       
-    # print("Leptons:", leptons)
+    
+    
+    # Jet-Parton Matching
+    matched_jets = match_jets_to_partons(entry, last_copy_partons)
+    leading_jet, second_leading_jet = select_leading_jets_from_matched(matched_jets)
+                    
+    print("Leptons:", leptons)
     # print("Leptons len :", len(leptons))
     is_electron_channel = any(abs(pdgId) == 11 for lepton_pt, lepton_eta, Lepton_phi, lepton_pdgId in leptons)
     is_muon_channel = any(abs(pdgId) == 13 for lepton_pt, lepton_eta, Lepton_phi, lepton_pdgId in leptons)
     channel = "electron" if is_electron_channel else "muon" if is_muon_channel else "other"
+    jet_pt_cut = 50 if channel == "muon" else 40 if channel == "electron" else 50
+    leading_jet, second_leading_jet = select_leading_jets_from_matched(matched_jets, jet_pt_cut)
     # print("Leptons2:", leptons)
     
     passed_lepton_cut, passed_jet_cut, passed_met_cut, channel, top_pt_pass1, top_pt_pass2 = passes_selection_criteria(entry, leptons, tops, hadronic_top_pt, channel, top_pt_cut1, top_pt_cut2, b_quarks)
@@ -709,15 +724,6 @@ def process_event(entry, histograms, relevant_pdgIds):
                 histograms['h_muon_LHE_HT_after_toppt200_cut'].Fill(LHE_HT)
             if passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
                 histograms['h_muon_LHE_HT_after_toppt400_cut'].Fill(LHE_HT)
-        
-        channel = "electron" if is_electron_channel else "muon" if is_muon_channel else "other"
-        if channel == "electron":
-            jet_pt_cut = 40  
-        elif channel == "muon":
-            jet_pt_cut = 50  
-        else:
-            jet_pt_cut = 50
-        leading_jet, second_leading_jet = select_leading_jets(entry, jet_pt_cut)
 
         
         if leading_jet:
@@ -753,26 +759,52 @@ def process_event(entry, histograms, relevant_pdgIds):
 h_both_decays.Fill(0, both_decays_counter)
 
 
-def select_leading_jets(entry, jet_pt_cut):
-    leading_jet = None
-    second_leading_jet = None
-    highest_pt_jet = 0 
-    second_high_pt=0
-    jet_1=0
-    jet_2=0
-    for i in range(entry.nGenJet):
-        jet_pt = entry.GenJet_pt[i]
-        jet_eta = entry.GenJet_eta[i]
+def match_jets_to_partons(entry, last_copy_partons):
+    matched_jets = []
+    for j in range(entry.nGenJet):
+        jet = ROOT.TLorentzVector()
+        jet.SetPtEtaPhiM(entry.GenJet_pt[j], entry.GenJet_eta[j], entry.GenJet_phi[j], 0)  # jet mass is negligible
+
+        # finding the closest last copy parton to this jet
+        closest_parton = min(last_copy_partons, key=lambda p: deltaR(jet.Eta(), jet.Phi(), p.Eta(), p.Phi()))
+        if deltaR(jet.Eta(), jet.Phi(), closest_parton.Eta(), closest_parton.Phi()) < 0.4:
+            matched_jets.append(jet)
+
+    return matched_jets
+
+def select_leading_jets_from_matched(matched_jets, jet_pt_cut):
+    
+    filtered_jets = [jet for jet in matched_jets if jet.Pt() > jet_pt_cut]
+    
+    # Sort the matched jets by their pT in descending order
+    sorted_jets = sorted(filtered_jets, key=lambda jet: jet.Pt(), reverse=True)
+
+    # Select the leading and second leading jets
+    leading_jet = sorted_jets[0] if len(sorted_jets) > 0 else None
+    second_leading_jet = sorted_jets[1] if len(sorted_jets) > 1 else None
+
+    return leading_jet, second_leading_jet
+
+# def select_leading_jets(entry, jet_pt_cut):
+#     leading_jet = None
+#     second_leading_jet = None
+#     highest_pt_jet = 0 
+#     second_high_pt=0
+#     jet_1=0
+#     jet_2=0
+#     for i in range(entry.nGenJet):
+#         jet_pt = entry.GenJet_pt[i]
+#         jet_eta = entry.GenJet_eta[i]
         
-        if jet_pt > jet_pt_cut and abs(jet_eta) < 2.4:
-            if leading_jet is None or jet_pt > leading_jet[0]:
-                second_leading_jet = leading_jet
-                leading_jet = (jet_pt, jet_eta, i, entry.GenJet_partonFlavour[i])
-            elif second_leading_jet is None or (jet_pt > second_leading_jet[0] and jet_pt < leading_jet[0]):
-                second_leading_jet = (jet_pt, jet_eta, i, entry.GenJet_partonFlavour[i])
+#         if jet_pt > jet_pt_cut and abs(jet_eta) < 2.4:
+#             if leading_jet is None or jet_pt > leading_jet[0]:
+#                 second_leading_jet = leading_jet
+#                 leading_jet = (jet_pt, jet_eta, i, entry.GenJet_partonFlavour[i])
+#             elif second_leading_jet is None or (jet_pt > second_leading_jet[0] and jet_pt < leading_jet[0]):
+#                 second_leading_jet = (jet_pt, jet_eta, i, entry.GenJet_partonFlavour[i])
 
 
-    return leading_jet, second_leading_jet  
+#     return leading_jet, second_leading_jet  
     
 def check_b_jet_from_top(leading_jet, second_leading_jet):
 
@@ -826,11 +858,14 @@ def passes_selection_criteria(entry, leptons, tops, hadronic_top_pt, channel, to
 
     # 1) identify first and second leading jets
     # b_quarks = find_b_quarks_from_top(entry)
-    leading_jet, second_leading_jet = select_leading_jets(entry, jet_pt_cut)
-    # if leading_jet is not None:
-        # print("Leading Jet from passes_selection_criteria: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*leading_jet))
-    # if second_leading_jet is not None:
-        # print("Second Leading Jet from passes_selection_criteria: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*second_leading_jet))
+    matched_jets = match_jets_to_partons(entry, last_copy_partons)
+    leading_jet, second_leading_jet = select_leading_jets_from_matched(matched_jets, jet_pt_cut)
+
+    # leading_jet, second_leading_jet = select_leading_jets(entry, jet_pt_cut)
+    if leading_jet is not None:
+        print("Leading Jet from passes_selection_criteria: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*leading_jet))
+    if second_leading_jet is not None:
+        print("Second Leading Jet from passes_selection_criteria: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*second_leading_jet))
 
 
     # 2) check if either leading jet is a b-quark from top
@@ -864,8 +899,14 @@ def passes_selection_criteria(entry, leptons, tops, hadronic_top_pt, channel, to
     top_pt_pass1 = any(pt > top_pt_cut1 for pt in hadronic_top_pt)
     top_pt_pass2 = any(pt > top_pt_cut2 for pt in hadronic_top_pt)
 
+    jet_i = i in range(entry.nGenJet) if entry.GenJet_pt[i]
+    print("Jet 0: ", entry.GenJet_pt[0])
+    print("Jet 1: ", entry.GenJet_pt[1])
+    print("Jets: ", entry.GenJet_pt[i])
     
-    jet_count = sum(1 for i in range(entry.nGenJet) if entry.GenJet_pt[i] > jet_pt_cut)
+    jet_count = 0
+    if entry.nGenJet >= 2:
+        jet_count = int(entry.GenJet_pt[0] > jet_pt_cut) + int(entry.GenJet_pt[1] > jet_pt_cut)
     passed_lepton_cut = sum(1 for lepton in leptons if lepton[0] > lepton_pt_cut and abs(lepton[1]) < lepton_eta_cut) > 0
     passed_jet_cut = jet_count > 0
     passed_met_cut = met_pt > met_cut
