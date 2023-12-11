@@ -1,5 +1,7 @@
 import ROOT
 
+ROOT.gROOT.SetBatch(True)
+
 def save_histograms(root_file_path, output_dir, histogram_names):
     file = ROOT.TFile(root_file_path)
 
@@ -56,7 +58,11 @@ if __name__ == "__main__":
     'h_LHE_HT_750_900_muon_AK8400',
     'h_LHE_HT_900_1250_muon_AK8400',
     'h_LHE_HT_1250_1500_muon_AK8400',
-    'h_LHE_HT_1500_up_muon_AK8400'
+    'h_LHE_HT_1500_up_muon_AK8400',
+    'h_leading_jet_pt_electron',
+    'h_second_leading_jet_pt_electron',
+    'h_leading_jet_pt_muon',
+    'h_second_leading_jet_pt_muon'
         # 'h_leptonPt', 'h_leptoneta', 'h_leptonphi', 'h_leptonFlavor',
         # 'h_electronPt', 'h_electronPt_aftercut200', 'h_electronPt_aftercut400',
         # 'h_electroneta', 'h_electroneta_aftercut200', 'h_electroneta_aftercut400',
