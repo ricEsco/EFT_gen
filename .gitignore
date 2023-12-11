@@ -15,3 +15,5 @@
 *.nfs*
 *.xz
 *.tgz
+*.err
+*.out
