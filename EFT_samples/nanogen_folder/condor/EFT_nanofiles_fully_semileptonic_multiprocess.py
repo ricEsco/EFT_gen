@@ -131,6 +131,11 @@ h_ele_ttbarMass_vs_HT_aftercut400 = ROOT.TH2F("h_ele_ttbarMass_vs_HT_aftercut400
 h_leading_jet_pt = ROOT.TH1F("h_leading_jet_pt", "Leading Jet pT; pT (GeV);Events", 100, 0, 1000)
 h_second_leading_jet_pt = ROOT.TH1F("h_second_leading_jet_pt", "Second Leading Jet pT; pT (GeV);Events", 100, 0, 1000)
 
+h_leading_jet_pt_electron = ROOT.TH1F("h_leading_jet_pt_electron", "Leading Jet pT Electron Channel; pT (GeV);Events", 100, 0, 1000)
+h_second_leading_jet_pt_electron = ROOT.TH1F("h_second_leading_jet_pt_electron", "Second Leading Jet pT Electron Channel; pT (GeV);Events", 100, 0, 1000)
+h_leading_jet_pt_muon = ROOT.TH1F("h_leading_jet_pt_muon", "Leading Jet pT Muon Channel; pT (GeV);Events", 100, 0, 1000)
+h_second_leading_jet_pt_muon = ROOT.TH1F("h_second_leading_jet_pt_muon", "Second Leading Jet pT Muon Channel; pT (GeV);Events", 100, 0, 1000)
+
 h_LHE_HT_0_500_ele_withoutAK8 = ROOT.TH1F("h_LHE_HT_0_500_ele_withoutAK8", "LHE_HT for 0-500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
 h_LHE_HT_500_750_ele_withoutAK8 = ROOT.TH1F("h_LHE_HT_500_750_ele_withoutAK8", "LHE_HT for 500-750 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
 h_LHE_HT_750_900_ele_withoutAK8 = ROOT.TH1F("h_LHE_HT_750_900_ele_withoutAK8", "LHE_HT for 750-900 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
@@ -288,8 +293,11 @@ def process_event(entry, histograms, relevant_pdgIds):
                     # Check if W decays leptonically
                     for k in range(entry.nGenPart):
                         if entry.GenPart_genPartIdxMother[k] == w_daughter and abs(entry.GenPart_pdgId[k]) in [11, 13]:  
+    
                             lepton_pdg = entry.GenPart_pdgId[k]
+                            print('Lepton pdg:', lepton_pdg)
                             lepton_pt = entry.GenPart_pt[k]
+                            # print('Lepton t:', lepton_pt)
                             lepton_eta = entry.GenPart_eta[k]
                             lepton_phi = entry.GenPart_phi[k]
                             histograms['h_leptonPt'].Fill(lepton_pt)
@@ -302,6 +310,9 @@ def process_event(entry, histograms, relevant_pdgIds):
                                 channel = "electron"
                             elif abs(lepton_pdg) == 13:
                                 channel = "muon"
+                                
+                        else: 
+                            continue
                         
                         if abs(pdgId) in [12, 14, 16]:  
                             neutrino = ROOT.TLorentzVector()
@@ -350,13 +361,18 @@ def process_event(entry, histograms, relevant_pdgIds):
                         b_vector.SetPtEtaPhiM(entry.GenPart_pt[b_daughter], entry.GenPart_eta[b_daughter], entry.GenPart_phi[b_daughter], entry.GenPart_mass[b_daughter])
                         histograms['h_bquark_pt'].Fill(b_vector.Pt())
                         histograms['h_bquark_eta'].Fill(b_vector.Eta())
+                else: 
+                    continue  
+            else:
+                continue
                        
-            
-
+    # print("Leptons:", leptons)
+    # print("Leptons len :", len(leptons))
     is_electron_channel = any(abs(pdgId) == 11 for lepton_pt, lepton_eta, Lepton_phi, lepton_pdgId in leptons)
     is_muon_channel = any(abs(pdgId) == 13 for lepton_pt, lepton_eta, Lepton_phi, lepton_pdgId in leptons)
     channel = "electron" if is_electron_channel else "muon" if is_muon_channel else "other"
-
+    # print("Leptons2:", leptons)
+    
     passed_lepton_cut, passed_jet_cut, passed_met_cut, channel, top_pt_pass1, top_pt_pass2 = passes_selection_criteria(entry, leptons, tops, hadronic_top_pt, channel, top_pt_cut1, top_pt_cut2, b_quarks)
         
     for lepton in leptons:
@@ -702,12 +718,33 @@ def process_event(entry, histograms, relevant_pdgIds):
         else:
             jet_pt_cut = 50
         leading_jet, second_leading_jet = select_leading_jets(entry, jet_pt_cut)
+
         
         if leading_jet:
             histograms['h_leading_jet_pt'].Fill(leading_jet[0]) #leading_jet[0] contains the pt of the leading jet
         if second_leading_jet:
             histograms['h_second_leading_jet_pt'].Fill(second_leading_jet[0])
-            
+        
+        if len(leptons)>0:  
+            if channel == "electron":
+                if leading_jet:
+                    histograms['h_leading_jet_pt_electron'].Fill(leading_jet[0]) #leading_jet[0] contains the pt of the leading jet
+                    print("Leading Jet electron: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*leading_jet))
+                if second_leading_jet:
+                    histograms['h_second_leading_jet_pt_electron'].Fill(second_leading_jet[0])
+                    print("Second Leading Jet electron: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*second_leading_jet))
+
+                    
+            if channel == "muon":
+                if leading_jet:
+                    print("Leading Jet muon: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*leading_jet))
+                    histograms['h_leading_jet_pt_muon'].Fill(leading_jet[0]) #leading_jet[0] contains the pt of the leading jet
+                if second_leading_jet:
+                    histograms['h_second_leading_jet_pt_muon'].Fill(second_leading_jet[0])
+                    print("Second Leading Jet muon: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*second_leading_jet))
+        
+        
+        # if leading_jet is not None:
         pass_criteria = passes_selection_criteria(entry, leptons, tops, hadronic_top_pt, channel, top_pt_cut1, top_pt_cut2, b_quarks)
     
  
@@ -978,7 +1015,11 @@ def analyze(filename):
     'h_LHE_HT_750_900_muon_AK8400' : h_LHE_HT_750_900_muon_AK8400,
     'h_LHE_HT_900_1250_muon_AK8400' : h_LHE_HT_900_1250_muon_AK8400,
     'h_LHE_HT_1250_1500_muon_AK8400' : h_LHE_HT_1250_1500_muon_AK8400,
-    'h_LHE_HT_1500_up_muon_AK8400' : h_LHE_HT_1500_up_muon_AK8400
+    'h_LHE_HT_1500_up_muon_AK8400' : h_LHE_HT_1500_up_muon_AK8400,
+    'h_leading_jet_pt_electron' : h_leading_jet_pt_electron,
+    'h_second_leading_jet_pt_electron' : h_second_leading_jet_pt_electron,
+    'h_leading_jet_pt_muon' : h_leading_jet_pt_muon,
+    'h_second_leading_jet_pt_muon' : h_second_leading_jet_pt_muon
     
     
     
