@@ -1,0 +1,8 @@
+Universe = vanilla
+Executable = run_on_condor.sh
+output = $(Cluster)_$(Process).out
+error = $(Cluster)_$(Process).err
+log = $(Cluster)_$(Process).log
+Transfer_Input_Files = UL_nano_fully_semileptonic_multiprocess.py
+WhenToTransferOutput = ON_EXIT
+Queue
