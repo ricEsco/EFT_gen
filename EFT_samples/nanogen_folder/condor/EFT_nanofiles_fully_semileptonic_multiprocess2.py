@@ -62,8 +62,12 @@ h_antitopPt = ROOT.TH1F("h_antitopPt", "Anti-Top Quark p_{T} Before Cuts; p_{T} 
 h_antitopPt_aftercut200 = ROOT.TH1F("h_antitopPt_aftercut200", "Anti-Top Quark p_{T} After Cuts & TopPt>200; p_{T} [GeV];Events", 1000, 0, 3000)
 h_antitopPt_aftercut400 = ROOT.TH1F("h_antitopPt_aftercut400", "Anti-Top Quark p_{T} After Cuts & TopPt>400; p_{T} [GeV];Events", 1000, 0, 3000)
 
-h_bquark_pt = ROOT.TH1F("h_bquark_pt", "b-quark pT Before Cuts ;pT (GeV);Events", 150, 0, 1000)
-h_bquark_eta = ROOT.TH1F("h_bquark_eta", "b-quark #eta Before Cuts ;#eta;Events", 100, -5, 5)
+h_bquark_pt_electron = ROOT.TH1F("h_bquark_pt_electron", "b-quark pT Electron Channel ;pT (GeV);Events", 150, 0, 1000)
+h_bquark_eta_electron = ROOT.TH1F("h_bquark_eta_electron", "b-quark #eta Electron Channel  ;#eta;Events", 100, -5, 5)
+
+h_bquark_pt_muon = ROOT.TH1F("h_bquark_pt_muon", "b-quark pT Muon Channel  ;pT (GeV);Events", 150, 0, 1000)
+h_bquark_eta_muon = ROOT.TH1F("h_bquark_eta_muon", "b-quark #eta Electron Channel  ;#eta;Events", 100, -5, 5)
+
 h_bquark_pt_aftercut200 = ROOT.TH1F("h_bquark_pt_aftercut200", "b-quark pT After Cuts & TopPt>200 ;pT (GeV);Events", 150, 0, 1000)
 h_bquark_pt_aftercut400 = ROOT.TH1F("h_bquark_pt_aftercut400", "b-quark pT After Cuts & TopPt>400 ;pT (GeV);Events", 150, 0, 1000)
 
@@ -131,7 +135,56 @@ h_ele_ttbarMass_vs_HT_aftercut400 = ROOT.TH2F("h_ele_ttbarMass_vs_HT_aftercut400
 h_leading_jet_pt = ROOT.TH1F("h_leading_jet_pt", "Leading Jet pT; pT (GeV);Events", 100, 0, 1000)
 h_second_leading_jet_pt = ROOT.TH1F("h_second_leading_jet_pt", "Second Leading Jet pT; pT (GeV);Events", 100, 0, 1000)
 
+h_leading_jet_pt_electron = ROOT.TH1F("h_leading_jet_pt_electron", "Leading Jet pT Electron Channel; pT (GeV);Events", 100, 0, 1000)
+h_second_leading_jet_pt_electron = ROOT.TH1F("h_second_leading_jet_pt_electron", "Second Leading Jet pT Electron Channel; pT (GeV);Events", 100, 0, 1000)
+h_leading_jet_pt_muon = ROOT.TH1F("h_leading_jet_pt_muon", "Leading Jet pT Muon Channel; pT (GeV);Events", 100, 0, 1000)
+h_second_leading_jet_pt_muon = ROOT.TH1F("h_second_leading_jet_pt_muon", "Second Leading Jet pT Muon Channel; pT (GeV);Events", 100, 0, 1000)
 
+h_LHE_HT_0_500_ele_withoutAK8 = ROOT.TH1F("h_LHE_HT_0_500_ele_withoutAK8", "LHE_HT for 0-500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_500_750_ele_withoutAK8 = ROOT.TH1F("h_LHE_HT_500_750_ele_withoutAK8", "LHE_HT for 500-750 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_750_900_ele_withoutAK8 = ROOT.TH1F("h_LHE_HT_750_900_ele_withoutAK8", "LHE_HT for 750-900 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_900_1250_ele_withoutAK8 = ROOT.TH1F("h_LHE_HT_900_1250_ele_withoutAK8", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1250_1500_ele_withoutAK8 = ROOT.TH1F("h_LHE_HT_1250_1500_ele_withoutAK8", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1500_up_ele_withoutAK8 = ROOT.TH1F("h_LHE_HT_1500_up_ele_withoutAK8", "LHE_HT for >1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+
+h_LHE_HT_0_500_ele_AK8200 = ROOT.TH1F("h_LHE_HT_0_500_ele_AK8200", "LHE_HT for 0-500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_500_750_ele_AK8200 = ROOT.TH1F("h_LHE_HT_500_750_ele_AK8200", "LHE_HT for 500-750 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_750_900_ele_AK8200 = ROOT.TH1F("h_LHE_HT_750_900_ele_AK8200", "LHE_HT for 750-900 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_900_1250_ele_AK8200 = ROOT.TH1F("h_LHE_HT_900_1250_ele_AK8200", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1250_1500_ele_AK8200 = ROOT.TH1F("h_LHE_HT_1250_1500_ele_AK8200", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1500_up_ele_AK8200 = ROOT.TH1F("h_LHE_HT_1500_up_ele_AK8200", "LHE_HT for >1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+
+h_LHE_HT_0_500_ele_AK8400 = ROOT.TH1F("h_LHE_HT_0_500_ele_AK8400", "LHE_HT for 0-500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_500_750_ele_AK8400 = ROOT.TH1F("h_LHE_HT_500_750_ele_AK8400", "LHE_HT for 500-750 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_750_900_ele_AK8400 = ROOT.TH1F("h_LHE_HT_750_900_ele_AK8400", "LHE_HT for 750-900 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_900_1250_ele_AK8400 = ROOT.TH1F("h_LHE_HT_900_1250_ele_AK8400", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1250_1500_ele_AK8400 = ROOT.TH1F("h_LHE_HT_1250_1500_ele_AK8400", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1500_up_ele_AK8400 = ROOT.TH1F("h_LHE_HT_1500_up_ele_AK8400", "LHE_HT for >1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+  
+h_LHE_HT_0_500_muon_withoutAK8 = ROOT.TH1F("h_LHE_HT_0_500_muon_withoutAK8", "LHE_HT for 0-500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_500_750_muon_withoutAK8 = ROOT.TH1F("h_LHE_HT_500_750_muon_withoutAK8", "LHE_HT for 500-750 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_750_900_muon_withoutAK8 = ROOT.TH1F("h_LHE_HT_750_900_muon_withoutAK8", "LHE_HT for 750-900 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_900_1250_muon_withoutAK8 = ROOT.TH1F("h_LHE_HT_900_1250_muon_withoutAK8", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1250_1500_muon_withoutAK8 = ROOT.TH1F("h_LHE_HT_1250_1500_muon_withoutAK8", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1500_up_muon_withoutAK8 = ROOT.TH1F("h_LHE_HT_1500_up_muon_withoutAK8", "LHE_HT for >1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+
+h_LHE_HT_0_500_muon_AK8200 = ROOT.TH1F("h_LHE_HT_0_500_muon_AK8200", "LHE_HT for 0-500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_500_750_muon_AK8200 = ROOT.TH1F("h_LHE_HT_500_750_muon_AK8200", "LHE_HT for 500-750 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_750_900_muon_AK8200 = ROOT.TH1F("h_LHE_HT_750_900_muon_AK8200", "LHE_HT for 750-900 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_900_1250_muon_AK8200 = ROOT.TH1F("h_LHE_HT_900_1250_muon_AK8200", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1250_1500_muon_AK8200 = ROOT.TH1F("h_LHE_HT_1250_1500_muon_AK8200", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1500_up_muon_AK8200 = ROOT.TH1F("h_LHE_HT_1500_up_muon_AK8200", "LHE_HT for >1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+
+h_LHE_HT_0_500_muon_AK8400 = ROOT.TH1F("h_LHE_HT_0_500_muon_AK8400", "LHE_HT for 0-500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_500_750_muon_AK8400 = ROOT.TH1F("h_LHE_HT_500_750_muon_AK8400", "LHE_HT for 500-750 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_750_900_muon_AK8400 = ROOT.TH1F("h_LHE_HT_750_900_muon_AK8400", "LHE_HT for 750-900 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_900_1250_muon_AK8400 = ROOT.TH1F("h_LHE_HT_900_1250_muon_AK8400", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1250_1500_muon_AK8400 = ROOT.TH1F("h_LHE_HT_1250_1500_muon_AK8400", "LHE_HT for 1000-1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+h_LHE_HT_1500_up_muon_AK8400 = ROOT.TH1F("h_LHE_HT_1500_up_muon_AK8400", "LHE_HT for >1500 GeV; LHE_HT (GeV); Events", 100, 0, 3000)
+  
+  
+  
+  
 def deltaR(eta1, phi1, eta2, phi2):
     deta = eta1 - eta2
     dphi = abs(phi1 - phi2)
@@ -152,6 +205,7 @@ def deltaR(eta1, phi1, eta2, phi2):
 both_decays_counter = 0
 
 
+
 def is_last_copy(statusFlags):
     try:
         status_flags_int = int(statusFlags)
@@ -169,10 +223,11 @@ def process_event(entry, histograms, relevant_pdgIds):
     top_count_aftercut400 = 0
     antitop_count_aftercut400 = 0
     
-    leptons = []
+    # leptons = []
     tops = []
     b_quarks = []
     w_bosons = []
+    hadronic_top_pt = []
     
     last_copy_decays = []
     jets_from_w = []
@@ -185,6 +240,9 @@ def process_event(entry, histograms, relevant_pdgIds):
     jets_from_w_count_after400 = 0
     
     last_copy_top_decays = []
+    last_copy_partons = []
+    
+    leptons = []
     
     events_after_LHE_HT_cut = 0
     events_after_lepton_selection = 0
@@ -194,6 +252,11 @@ def process_event(entry, histograms, relevant_pdgIds):
     
     met_vector = ROOT.TLorentzVector() 
     
+    leptonic_decay = False
+    hadronic_decay = False
+    
+    electron_found = False
+    muon_found = False
     
     # processing particles
     for i in range(entry.nGenPart):
@@ -206,8 +269,20 @@ def process_event(entry, histograms, relevant_pdgIds):
         status = entry.GenPart_status[i]
         statusFlags = entry.GenPart_statusFlags[i]
         
+        # Collect all last copy partons
+        if is_last_copy(statusFlags):
+            parton_4vec = ROOT.TLorentzVector()
+            parton_4vec.SetPtEtaPhiM(pt, eta, phi, mass)
+            last_copy_partons.append(parton_4vec)
+            
+            # print("last copy parton:", parton_4vec)
+            # print("last copy parton 0:", parton_4vec[0])
+            # print("last copy parton 1:", parton_4vec[1])
+            # print("last copy parton 2:", parton_4vec[2])
+            # print("last copy parton 3:", parton_4vec[3])
+        
         # Check if particle is a top or antitop quark
-        if abs(pdgId) in relevant_pdgIds and is_last_copy(statusFlags): 
+        if abs(pdgId) in relevant_pdgIds and is_last_copy(statusFlags):  
             if abs(pdgId) == 6: 
                 
                 top_4vec = ROOT.TLorentzVector()
@@ -217,33 +292,55 @@ def process_event(entry, histograms, relevant_pdgIds):
                 b_daughter = None
                 last_copy_top_decays.append((pt, eta, phi))
                 
+                # print("1) top is ok:", top_4vec[0])
+                
+                has_leptonic_w_decay = False
+                has_hadronic_w_decay = False
+
                 # Checking if the j-th particle is a daughter of the i-th particle (top or anti-top quark)
                 for j in range(entry.nGenPart):
                     if entry.GenPart_genPartIdxMother[j] == i and abs(entry.GenPart_pdgId[j]) in [24, 5]:
                         last_copy_decays.append((pt, eta, phi, pdgId, i)) # append as a tuple
-
+                        
                         daughter_pdgId = entry.GenPart_pdgId[j]
+                        
                         if daughter_pdgId != 6 and daughter_pdgId != -6:
                             if abs(daughter_pdgId) == 24:
-                                w_4vec = ROOT.TLorentzVector()
-                                w_4vec.SetPtEtaPhiM(pt, eta, phi, mass)
-                                w_bosons.append(w_4vec)
+                                
                                 w_daughter = j
+                                w_4vec = ROOT.TLorentzVector()
+                                w_4vec.SetPtEtaPhiM(entry.GenPart_pt[w_daughter], entry.GenPart_eta[w_daughter], entry.GenPart_phi[w_daughter], entry.GenPart_mass[w_daughter])
+                                w_bosons.append(w_4vec)
+                                # print("2) w is ok:", w_daughter)
+                                
+                                if any(abs(entry.GenPart_pdgId[k]) in [11, 13] for k in range(entry.nGenPart) if entry.GenPart_genPartIdxMother[k] == w_daughter):
+                                    has_leptonic_w_decay = True
+                                    # print("3) lepton is ok:", has_leptonic_w_decay)
+                                elif any(abs(entry.GenPart_pdgId[k]) in [1, 2, 3, 4] for k in range(entry.nGenPart) if entry.GenPart_genPartIdxMother[k] == w_daughter):
+                                    has_hadronic_w_decay = True
+                                    
+                                    # print("3) hadronic is ok:", has_hadronic_w_decay)                      
                             elif abs(daughter_pdgId) == 5:
                                 b_daughter = j
                                 b_4vec = ROOT.TLorentzVector()
-                                b_4vec.SetPtEtaPhiM(pt, eta, phi, mass)
+                                b_4vec.SetPtEtaPhiM(entry.GenPart_pt[b_daughter], entry.GenPart_eta[b_daughter], entry.GenPart_phi[b_daughter], entry.GenPart_mass[b_daughter])
                                 b_quarks.append((b_4vec, j))
+
+                                # print("2) b is ok:", b_daughter)
                 
-                if w_daughter is not None and b_daughter is not None:
-                    leptonic_decay = False
-                    hadronic_decay = False
+                if has_leptonic_w_decay:
+                    # both_decays_counter += 1
                     
                     # Check if W decays leptonically
                     for k in range(entry.nGenPart):
                         if entry.GenPart_genPartIdxMother[k] == w_daughter and abs(entry.GenPart_pdgId[k]) in [11, 13]:  
+                            
+                            
+                            
                             lepton_pdg = entry.GenPart_pdgId[k]
+                            # print('3)Lepton pdg:', lepton_pdg)
                             lepton_pt = entry.GenPart_pt[k]
+                            # print('Lepton t:', lepton_pt)
                             lepton_eta = entry.GenPart_eta[k]
                             lepton_phi = entry.GenPart_phi[k]
                             histograms['h_leptonPt'].Fill(lepton_pt)
@@ -253,9 +350,18 @@ def process_event(entry, histograms, relevant_pdgIds):
                             leptons.append((lepton_pt, lepton_eta, lepton_phi, lepton_pdg))
                             leptonic_decay = True
                             if abs(lepton_pdg) == 11:
-                                channel = "electron"
+                                electron_found = True
+                                # channel = "electron"
+                                # print("Electron found: pt =", entry.GenPart_pt[i])
+                            
                             elif abs(lepton_pdg) == 13:
-                                channel = "muon"
+                                muon_found = True
+                                # channel = "muon"
+                                # print("Muon found: pt =", entry.GenPart_pt[i])
+                                
+                                
+                        else: 
+                            continue
                         
                         if abs(pdgId) in [12, 14, 16]:  
                             neutrino = ROOT.TLorentzVector()
@@ -267,6 +373,8 @@ def process_event(entry, histograms, relevant_pdgIds):
                     w_quarks = [k for k in range(entry.nGenPart) if entry.GenPart_genPartIdxMother[k] == w_daughter and abs(entry.GenPart_pdgId[k]) in [1, 2, 3, 4]]
                     if len(w_quarks) == 2:
                         hadronic_decay = True
+                        hadronic_top_pt.append(pt)
+                        
                         quark1 = ROOT.TLorentzVector()
                         quark2 = ROOT.TLorentzVector()
                         quark1.SetPtEtaPhiM(entry.GenPart_pt[w_quarks[0]], entry.GenPart_eta[w_quarks[0]], entry.GenPart_phi[w_quarks[0]], entry.GenPart_mass[w_quarks[0]])
@@ -300,17 +408,69 @@ def process_event(entry, histograms, relevant_pdgIds):
                     if b_daughter is not None:
                         b_vector = ROOT.TLorentzVector()
                         b_vector.SetPtEtaPhiM(entry.GenPart_pt[b_daughter], entry.GenPart_eta[b_daughter], entry.GenPart_phi[b_daughter], entry.GenPart_mass[b_daughter])
-                        histograms['h_bquark_pt'].Fill(b_vector.Pt())
-                        histograms['h_bquark_eta'].Fill(b_vector.Eta())
-                       
-            
-
+                        # print("2) b_daughter:", b_vector.Pt())
+                        # histograms['h_bquark_pt'].Fill(b_vector.Pt())
+                        # histograms['h_bquark_eta'].Fill(b_vector.Eta())
+                else: 
+                    continue  
+            else:
+                continue
+    
+    
+                    
+    # print("Leptons:", leptons)
+    # print("Leptons len :", len(leptons))
     is_electron_channel = any(abs(pdgId) == 11 for lepton_pt, lepton_eta, Lepton_phi, lepton_pdgId in leptons)
     is_muon_channel = any(abs(pdgId) == 13 for lepton_pt, lepton_eta, Lepton_phi, lepton_pdgId in leptons)
-    channel = "electron" if is_electron_channel else "muon" if is_muon_channel else "other"
-
-    passed_lepton_cut, passed_jet_cut, passed_met_cut, channel, top_pt_pass1, top_pt_pass2 = passes_selection_criteria(entry, leptons, tops, channel, top_pt_cut1, top_pt_cut2, b_quarks)
+    
+    if electron_found and not muon_found:
+        channel = "electron"
+    elif muon_found and not electron_found:
+        channel = "muon"
+    else:
+        channel = "other"
+    
+    if channel == "other":
+        return
         
+    # print("Channel2:", channel)
+    
+    
+    passed_lepton_cut, passed_jet_cut, passed_met_cut, top_pt_pass1, top_pt_pass2 = passes_selection_criteria(entry, leptons, tops, channel, hadronic_top_pt, top_pt_cut1, top_pt_cut2, b_quarks, last_copy_partons)
+
+    print "Channel:", channel
+    print "Passed Lepton Cut:", passed_lepton_cut, "Passed Jet Cut:", passed_jet_cut, "Passed MET Cut:", passed_met_cut
+    # print "Top Pt Pass1:", top_pt_pass1, "Top Pt Pass2:", top_pt_pass2
+
+    if channel == "electron":
+        jet_pt_cut = 40
+    elif channel == "muon":
+        jet_pt_cut = 50
+    else:
+        jet_pt_cut = 50  
+    
+    matched_jets = match_jets_to_partons(entry, last_copy_partons)
+    leading_jet, second_leading_jet = select_leading_jets_from_matched(matched_jets, jet_pt_cut)
+    # print("Leptons2:", leptons)
+    # print(passes_selection_criteria(entry, leptons, tops, channel, hadronic_top_pt, top_pt_cut1, top_pt_cut2, b_quarks, last_copy_partons))
+
+    
+    
+    b_jet_matched, matched_b_quark = check_b_jet_from_top(b_quarks, leading_jet, second_leading_jet)
+    # print "b_jet_matched:", b_jet_matched
+    # if b_jet_matched:
+        # print "Matched b-quark Pt:", matched_b_quark[0].Pt(), "Index:", matched_b_quark[1]
+
+    if not b_jet_matched:
+        leading_b_quark = find_leading_b_quark(b_quarks, leading_jet, second_leading_jet)
+        # if leading_b_quark is None:
+            # print "No leading b-quark found outside of leading jets"
+        # else:
+            # print "Leading b-quark Pt:", leading_b_quark[0].Pt(), "Index:", leading_b_quark[1]
+        if leading_b_quark is None or leading_b_quark[0].Pt() < 30:
+            # Veto this event as it does not meet the b-quark criteria
+            return
+    
     for lepton in leptons:
         lepton_pt, lepton_eta, lepton_phi, lepton_pdgId = lepton
         if abs(lepton_pdgId) == 11:
@@ -340,112 +500,123 @@ def process_event(entry, histograms, relevant_pdgIds):
                 if top_pt_pass2:
                     histograms['h_muonPt_aftercut400'].Fill(lepton_pt)
                     histograms['h_muoneta_aftercut400'].Fill(lepton_eta)
-                                
-    for i in range(entry.nGenPart):
-        pdgId = entry.GenPart_pdgId[i]
-        pt = entry.GenPart_pt[i]
-        eta = entry.GenPart_eta[i]
-        phi = entry.GenPart_phi[i]
-        mass = entry.GenPart_mass[i]
-        mother_idx = entry.GenPart_genPartIdxMother[i]
-        status = entry.GenPart_status[i]
-        statusFlags = entry.GenPart_statusFlags[i]
+
+    # for i in range(entry.nGenPart):
+    #     pdgId = entry.GenPart_pdgId[i]
+    #     pt = entry.GenPart_pt[i]
+    #     eta = entry.GenPart_eta[i]
+    #     phi = entry.GenPart_phi[i]
+    #     mass = entry.GenPart_mass[i]
+    #     mother_idx = entry.GenPart_genPartIdxMother[i]
+    #     status = entry.GenPart_status[i]
+    #     statusFlags = entry.GenPart_statusFlags[i]
         
-        met_vector_after200 = ROOT.TLorentzVector()
-        met_vector_after400 = ROOT.TLorentzVector()
-                                   
-        for top_4vec in tops:
-            if pdgId == 6:
-                top_count += 1
-                histograms['h_topPt'].Fill(pt)
-                if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                    histograms['h_topPt_aftercut200'].Fill(pt)
-                    top_count_aftercut200 += 1
-                if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                    histograms['h_topPt_aftercut400'].Fill(pt)
-                    top_count_aftercut400 += 1
-                if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                    histograms['h_topPt_aftercut200'].Fill(pt)
-                    top_count_aftercut200 += 1
-                if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                    histograms['h_topPt_aftercut400'].Fill(pt)
-                    top_count_aftercut400 += 1
-                
-            elif pdgId == -6:
-                antitop_count += 1
-                histograms['h_antitopPt'].Fill(pt)
-                if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                    histograms['h_antitopPt_aftercut200'].Fill(pt)
-                    antitop_count_aftercut200 += 1
-                if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                    histograms['h_antitopPt_aftercut400'].Fill(pt)
-                    antitop_count_aftercut400 += 1
-                if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                    histograms['h_antitopPt_aftercut200'].Fill(pt)
-                    antitop_count_aftercut200 += 1
-                if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                    histograms['h_antitopPt_aftercut400'].Fill(pt)
-                    antitop_count_aftercut400 += 1
-
-            histograms['h_topMultiplicity'].Fill(top_count)
+    met_vector_after200 = ROOT.TLorentzVector()
+    met_vector_after400 = ROOT.TLorentzVector()
+                            
+    for top_4vec in tops:
+        if pdgId == 6:
+            top_count += 1
+            histograms['h_topPt'].Fill(top_4vec.Pt())
             if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                histograms['h_topMultiplicity_aftercut200'].Fill(top_count_aftercut200)
+                histograms['h_topPt_aftercut200'].Fill(top_4vec.Pt())
+                top_count_aftercut200 += 1
             if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                histograms['h_topMultiplicity_aftercut400'].Fill(top_count_aftercut400)
+                histograms['h_topPt_aftercut400'].Fill(top_4vec.Pt())
+                top_count_aftercut400 += 1
             if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                histograms['h_topMultiplicity_aftercut200'].Fill(top_count_aftercut200)
+                histograms['h_topPt_aftercut200'].Fill(top_4vec.Pt())
+                top_count_aftercut200 += 1
             if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                histograms['h_topMultiplicity_aftercut400'].Fill(top_count_aftercut400)
+                histograms['h_topPt_aftercut400'].Fill(top_4vec.Pt())
+                top_count_aftercut400 += 1
             
-            histograms['h_antitopMultiplicity'].Fill(antitop_count)
+        elif pdgId == -6:
+            antitop_count += 1
+            histograms['h_antitopPt'].Fill(top_4vec.Pt())
             if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                histograms['h_antitopMultiplicity_aftercut200'].Fill(antitop_count_aftercut200)
+                histograms['h_antitopPt_aftercut200'].Fill(top_4vec.Pt())
+                antitop_count_aftercut200 += 1
             if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                histograms['h_antitopMultiplicity_aftercut400'].Fill(antitop_count_aftercut400)
+                histograms['h_antitopPt_aftercut400'].Fill(top_4vec.Pt())
+                antitop_count_aftercut400 += 1
             if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                histograms['h_antitopMultiplicity_aftercut200'].Fill(antitop_count_aftercut200)
+                histograms['h_antitopPt_aftercut200'].Fill(top_4vec.Pt())
+                antitop_count_aftercut200 += 1
             if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                histograms['h_antitopMultiplicity_aftercut400'].Fill(antitop_count_aftercut400)
+                histograms['h_antitopPt_aftercut400'].Fill(top_4vec.Pt())
+                antitop_count_aftercut400 += 1
 
-        for w_4vec in w_bosons:
-            if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
+        histograms['h_topMultiplicity'].Fill(top_count)
+        if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
+            histograms['h_topMultiplicity_aftercut200'].Fill(top_count_aftercut200)
+        if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
+            histograms['h_topMultiplicity_aftercut400'].Fill(top_count_aftercut400)
+        if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
+            histograms['h_topMultiplicity_aftercut200'].Fill(top_count_aftercut200)
+        if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
+            histograms['h_topMultiplicity_aftercut400'].Fill(top_count_aftercut400)
+        
+        histograms['h_antitopMultiplicity'].Fill(antitop_count)
+        if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
+            histograms['h_antitopMultiplicity_aftercut200'].Fill(antitop_count_aftercut200)
+        if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
+            histograms['h_antitopMultiplicity_aftercut400'].Fill(antitop_count_aftercut400)
+        if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
+            histograms['h_antitopMultiplicity_aftercut200'].Fill(antitop_count_aftercut200)
+        if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
+            histograms['h_antitopMultiplicity_aftercut400'].Fill(antitop_count_aftercut400)
+
+    for w_4vec in w_bosons:
+        if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
+            histograms['h_hadronic_w_mass_aftercut200'].Fill(w_4vec.M())
+        if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
+                histograms['h_hadronic_w_mass_aftercut400'].Fill(w_4vec.M())          
+        if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
                 histograms['h_hadronic_w_mass_aftercut200'].Fill(w_4vec.M())
-            if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                    histograms['h_hadronic_w_mass_aftercut400'].Fill(w_4vec.M())          
-            if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                    histograms['h_hadronic_w_mass_aftercut200'].Fill(w_4vec.M())
-            if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                    histograms['h_hadronic_w_mass_aftercut400'].Fill(w_4vec.M())
+        if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
+                histograms['h_hadronic_w_mass_aftercut400'].Fill(w_4vec.M())
 
-        for b_quark in b_quarks:
-            b_vector, b_index = b_quark
-            if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                histograms['h_bquark_pt_aftercut200'].Fill(b_vector.Pt())
-            if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                histograms['h_bquark_pt_aftercut400'].Fill(b_vector.Pt())
-            if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
-                histograms['h_bquark_pt_aftercut200'].Fill(b_vector.Pt())
-            if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
-                histograms['h_bquark_pt_aftercut400'].Fill(b_vector.Pt())
-        
-       
-        
-        for jet_info in jets_from_w_info:
-            jet_idx, jet_pt, jet_eta, jet_phi = jet_info
-            histograms['h_jetFromW_pt'].Fill(jet_pt)
-            histograms['h_jetFromW_eta'].Fill(jet_eta)
+    for b_quark in b_quarks:
+        b_vector, b_index = b_quark 
+        # print("bquark pt:", b_vector.Pt())    
+        # if passed_jet_cut: 
+            # print("bquark pt:", b_vector.Pt())  
+        if (channel == "electron") and passed_jet_cut:
+            # print("bquark pt electron:", b_vector.Pt())
+            histograms['h_bquark_pt_electron'].Fill(b_vector.Pt())
+            histograms['h_bquark_eta_electron'].Fill(b_vector.Eta())
+        if (channel == "muon") and passed_jet_cut:
+            # print("bquark pt muon:", b_vector.Pt())
+            histograms['h_bquark_pt_muon'].Fill(b_vector.Pt())
+            histograms['h_bquark_eta_muon'].Fill(b_vector.Eta())
             
-            if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
-                if top_pt_pass1:
-                    histograms['h_jetFromW_pt_aftercut200'].Fill(jet_pt)
-                if top_pt_pass2:
-                    histograms['h_jetFromW_pt_aftercut400'].Fill(jet_pt)
-            elif channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
-                if top_pt_pass1:
-                    histograms['h_jetFromW_pt_aftercut200'].Fill(jet_pt)
-                if top_pt_pass2:
-                    histograms['h_jetFromW_pt_aftercut400'].Fill(jet_pt)
+        if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
+            histograms['h_bquark_pt_aftercut200'].Fill(b_vector.Pt())
+        if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
+            histograms['h_bquark_pt_aftercut400'].Fill(b_vector.Pt())
+        if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
+            histograms['h_bquark_pt_aftercut200'].Fill(b_vector.Pt())
+        if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
+            histograms['h_bquark_pt_aftercut400'].Fill(b_vector.Pt())
+    
 
+    
+    for jet_info in jets_from_w_info:
+        jet_idx, jet_pt, jet_eta, jet_phi = jet_info
+        histograms['h_jetFromW_pt'].Fill(jet_pt)
+        histograms['h_jetFromW_eta'].Fill(jet_eta)
+        
+        if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
+            if top_pt_pass1:
+                histograms['h_jetFromW_pt_aftercut200'].Fill(jet_pt)
+            if top_pt_pass2:
+                histograms['h_jetFromW_pt_aftercut400'].Fill(jet_pt)
+        elif channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
+            if top_pt_pass1:
+                histograms['h_jetFromW_pt_aftercut200'].Fill(jet_pt)
+            if top_pt_pass2:
+                histograms['h_jetFromW_pt_aftercut400'].Fill(jet_pt)
 
     histograms['h_jetMultiplicity_fromW'].Fill(jets_from_w_count)
     histograms['h_jetMultiplicity_fromW_after200'].Fill(jets_from_w_count_after200)
@@ -462,9 +633,7 @@ def process_event(entry, histograms, relevant_pdgIds):
     if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
         histograms['h_MET_after400'].Fill(met_vector.Pt()) 
     
-    
-    
-           
+        
     
     if top_count > 0 and antitop_count > 0:
         top_idx = next((idx for idx, pdg in enumerate(entry.GenPart_pdgId) if pdg == 6), None)
@@ -474,7 +643,10 @@ def process_event(entry, histograms, relevant_pdgIds):
             top_4vec.SetPtEtaPhiM(entry.GenPart_pt[top_idx], entry.GenPart_eta[top_idx], entry.GenPart_phi[top_idx], entry.GenPart_mass[top_idx])
             antitop_4vec.SetPtEtaPhiM(entry.GenPart_pt[antitop_idx], entry.GenPart_eta[antitop_idx], entry.GenPart_phi[antitop_idx], entry.GenPart_mass[antitop_idx])
             ttbar = top_4vec + antitop_4vec
-            histograms['h_invariantMass'].Fill(ttbar.M())
+            m_tt = ttbar.M()
+            
+            if ttbar is not None:
+                histograms['h_invariantMass'].Fill(ttbar.M())
             if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass1:
                 histograms['h_invariantMass_aftercut200'].Fill(ttbar.M())
             if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
@@ -483,7 +655,99 @@ def process_event(entry, histograms, relevant_pdgIds):
                 histograms['h_invariantMass_aftercut200'].Fill(ttbar.M())
             if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
                 histograms['h_invariantMass_aftercut400'].Fill(ttbar.M())
+                
+            LHE_HT = getattr(entry, "LHE_HT", -1)
+            if LHE_HT >= 0:
+                if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
+                    if 0 <= m_tt < 500:
+                        histograms['h_LHE_HT_0_500_ele_withoutAK8'].Fill(LHE_HT)
+                    elif 500 <= m_tt < 750:
+                        histograms['h_LHE_HT_500_750_ele_withoutAK8'].Fill(LHE_HT)
+                    elif 750 <= m_tt < 900:
+                        histograms['h_LHE_HT_750_900_ele_withoutAK8'].Fill(LHE_HT)
+                    elif 900 <= m_tt < 1250:
+                        histograms['h_LHE_HT_900_1250_ele_withoutAK8'].Fill(LHE_HT)
+                    elif 1250 <= m_tt < 1500:
+                        histograms['h_LHE_HT_1250_1500_ele_withoutAK8'].Fill(LHE_HT)
+                    elif m_tt >= 1500:
+                        histograms['h_LHE_HT_1500_up_ele_withoutAK8'].Fill(LHE_HT)
+                        
+                    if top_pt_pass1:
                     
+                        if 0 <= m_tt < 500:
+                            histograms['h_LHE_HT_0_500_ele_AK8200'].Fill(LHE_HT)
+                        elif 500 <= m_tt < 750:
+                            histograms['h_LHE_HT_500_750_ele_AK8200'].Fill(LHE_HT)
+                        elif 750 <= m_tt < 900:
+                            histograms['h_LHE_HT_750_900_ele_AK8200'].Fill(LHE_HT)
+                        elif 900 <= m_tt < 1250:
+                            histograms['h_LHE_HT_900_1250_ele_AK8200'].Fill(LHE_HT)
+                        elif 1250 <= m_tt < 1500:
+                            histograms['h_LHE_HT_1250_1500_ele_AK8200'].Fill(LHE_HT)
+                        elif m_tt >= 1500:
+                            histograms['h_LHE_HT_1500_up_ele_AK8200'].Fill(LHE_HT)
+                    
+                    if top_pt_pass2:
+                        
+                        if 0 <= m_tt < 500:
+                            histograms['h_LHE_HT_0_500_ele_AK8400'].Fill(LHE_HT)
+                        elif 500 <= m_tt < 750:
+                            histograms['h_LHE_HT_500_750_ele_AK8400'].Fill(LHE_HT)
+                        elif 750 <= m_tt < 900:
+                            histograms['h_LHE_HT_750_900_ele_AK8400'].Fill(LHE_HT)
+                        elif 900 <= m_tt < 1250:
+                            histograms['h_LHE_HT_900_1250_ele_AK8400'].Fill(LHE_HT)
+                        elif 1250 <= m_tt < 1500:
+                            histograms['h_LHE_HT_1250_1500_ele_AK8400'].Fill(LHE_HT)
+                        elif m_tt >= 1500:
+                            histograms['h_LHE_HT_1500_up_ele_AK8400'].Fill(LHE_HT)
+                        
+                if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
+                
+                    if 0 <= m_tt < 500:
+                        histograms['h_LHE_HT_0_500_muon_withoutAK8'].Fill(LHE_HT)
+                    elif 500 <= m_tt < 750:
+                        histograms['h_LHE_HT_500_750_muon_withoutAK8'].Fill(LHE_HT)
+                    elif 750 <= m_tt < 900:
+                        histograms['h_LHE_HT_750_900_muon_withoutAK8'].Fill(LHE_HT)
+                    elif 900 <= m_tt < 1250:
+                        histograms['h_LHE_HT_900_1250_muon_withoutAK8'].Fill(LHE_HT)
+                    elif 1250 <= m_tt < 1500:
+                        histograms['h_LHE_HT_1250_1500_muon_withoutAK8'].Fill(LHE_HT)
+                    elif m_tt >= 1500:
+                        histograms['h_LHE_HT_1500_up_muon_withoutAK8'].Fill(LHE_HT)
+                        
+                    if top_pt_pass1:
+                            
+                        if 0 <= m_tt < 500:
+                            histograms['h_LHE_HT_0_500_muon_AK8200'].Fill(LHE_HT)
+                        elif 500 <= m_tt < 750:
+                            histograms['h_LHE_HT_500_750_muon_AK8200'].Fill(LHE_HT)
+                        elif 750 <= m_tt < 900:
+                            histograms['h_LHE_HT_750_900_muon_AK8200'].Fill(LHE_HT)
+                        elif 900 <= m_tt < 1250:
+                            histograms['h_LHE_HT_900_1250_muon_AK8200'].Fill(LHE_HT)
+                        elif 1250 <= m_tt < 1500:
+                            histograms['h_LHE_HT_1250_1500_muon_AK8200'].Fill(LHE_HT)
+                        elif m_tt >= 1500:
+                            histograms['h_LHE_HT_1500_up_muon_AK8200'].Fill(LHE_HT)
+                        
+                    if top_pt_pass2:
+                        
+                        if 0 <= m_tt < 500:
+                            histograms['h_LHE_HT_0_500_muon_AK8400'].Fill(LHE_HT)
+                        elif 500 <= m_tt < 750:
+                            histograms['h_LHE_HT_500_750_muon_AK8400'].Fill(LHE_HT)
+                        elif 750 <= m_tt < 900:
+                            histograms['h_LHE_HT_750_900_muon_AK8400'].Fill(LHE_HT)
+                        elif 900 <= m_tt < 1250:
+                            histograms['h_LHE_HT_900_1250_muon_AK8400'].Fill(LHE_HT)
+                        elif 1250 <= m_tt < 1500:
+                            histograms['h_LHE_HT_1250_1500_muon_AK8400'].Fill(LHE_HT)
+                        elif m_tt >= 1500:
+                            histograms['h_LHE_HT_1500_up_muon_AK8400'].Fill(LHE_HT)
+
+    
     
     non_top_mother_jet_count = 0
 
@@ -499,13 +763,11 @@ def process_event(entry, histograms, relevant_pdgIds):
 
     histograms['h_jetMultiplicity'].Fill(entry.nGenJet)
     histograms['h_nonTopMotherJets'].Fill(non_top_mother_jet_count)
-
-    
     # HT variable from data in ttree
     LHE_HT = getattr(entry, "LHE_HT", -1)
     if LHE_HT >= 0:
         histograms['h_LHE_HT_before'].Fill(LHE_HT)
-        histograms["h_ttbarMass_vs_HT"].Fill(LHE_HT, ttbar.M())
+        # histograms["h_ttbarMass_vs_HT"].Fill(LHE_HT, ttbar.M())
 
         # Apply selection criteria for LHE_HT
         if passed_lepton_cut and passed_jet_cut and passed_met_cut:
@@ -551,83 +813,114 @@ def process_event(entry, histograms, relevant_pdgIds):
                 histograms['h_muon_LHE_HT_after_toppt200_cut'].Fill(LHE_HT)
             if passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
                 histograms['h_muon_LHE_HT_after_toppt400_cut'].Fill(LHE_HT)
-        
-        channel = "electron" if is_electron_channel else "muon" if is_muon_channel else "other"
-        if channel == "electron":
-            jet_pt_cut = 40  
-        elif channel == "muon":
-            jet_pt_cut = 50  
-        else:
-            jet_pt_cut = 50
-        leading_jet, second_leading_jet = select_leading_jets(entry, jet_pt_cut)
-        
-        if leading_jet:
-            histograms['h_leading_jet_pt'].Fill(leading_jet[0]) #leading_jet[0] contains the pt of the leading jet
-        if second_leading_jet:
-            histograms['h_second_leading_jet_pt'].Fill(second_leading_jet[0])
+
+        if leading_jet is not None and second_leading_jet is not None:
+            if leading_jet:
+                # print("leading jet:", leading_jet[0].Pt())
+                # print("leading jet pdgId:", leading_jet[1])
+                histograms['h_leading_jet_pt'].Fill(leading_jet[0].Pt()) #leading_jet[0] contains the pt of the leading jet
+            if second_leading_jet:
+                histograms['h_second_leading_jet_pt'].Fill(second_leading_jet[0].Pt())
+                # print("second leading jet:", second_leading_jet[0].Pt())
+                # print("second leading jet pdgId:", second_leading_jet[1])
             
-        pass_criteria = passes_selection_criteria(entry, leptons, tops, channel, top_pt_cut1, top_pt_cut2, b_quarks)
+            if len(leptons)>0:  
+                if channel == "electron":
+                    if leading_jet:
+                        histograms['h_leading_jet_pt_electron'].Fill(leading_jet[0].Pt()) #leading_jet[0] contains the pt of the leading jet
+                        # print("Leading Jet electron: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*leading_jet))
+                    if second_leading_jet:
+                        histograms['h_second_leading_jet_pt_electron'].Fill(second_leading_jet[0].Pt())
+                        # print("Second Leading Jet electron: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*second_leading_jet))
+
+                        
+                if channel == "muon":
+                    if leading_jet:
+                        # print("Leading Jet muon: PT = {}, ETA = {}, PHI = {}, PDG ID = {}".format(
+                        #     leading_jet[0].Pt(), 
+                        #     leading_jet[0].Eta(), 
+                        #     leading_jet[0].Phi(), 
+                        #     leading_jet[1]# ))
+                        histograms['h_leading_jet_pt_muon'].Fill(leading_jet[0].Pt()) #leading_jet[0] contains the pt of the leading jet
+                    if second_leading_jet:
+                        histograms['h_second_leading_jet_pt_muon'].Fill(second_leading_jet[0].Pt())
+                        # print("Second Leading Jet muon: PT = {}, ETA = {}, PHI = {}, PDG ID = {}".format(
+                        #     second_leading_jet[0].Pt(), 
+                        #     second_leading_jet[0].Eta(), 
+                        #     second_leading_jet[0].Phi(), 
+                        #     second_leading_jet[1]
+                        # ))
+        
+        
+        # if leading_jet is not None:
+        # pass_criteria = passes_selection_criteria(entry, leptons, tops, hadronic_top_pt, channel, top_pt_cut1, top_pt_cut2, b_quarks, last_copy_partons)
     
- 
-    return leptons, tops, b_quarks
+    return leptons, tops, hadronic_top_pt, b_quarks, last_copy_partons, channel
 
 h_both_decays.Fill(0, both_decays_counter)
 
-# def find_b_quarks_from_top(entry, b_quarks):
-#     find_b_quarks_from_top = []
-#     for b_quark in b_quarks:
-#         b_pt, b_eta, b_phi, b_idx = b_quark
-#         mother_idx = entry.GenPart_genPartIdxMother[b_idx]
-#         if abs(entry.GenPart_pdgId[mother_idx]) == 6:
-#             b_quarks_from_top.append(b_quark)
-#     return find_b_quarks_from_top
+# This function identifies jets that are closely matched with last copy partons. 
+# It appends a tuple to matched_jets which includes the jet and its index in the GenJet collection.
+def match_jets_to_partons(entry, last_copy_partons):
+    matched_jets = []
+    for j in range(entry.nGenJet):
+        jet = ROOT.TLorentzVector()
+        jet.SetPtEtaPhiM(entry.GenJet_pt[j], entry.GenJet_eta[j], entry.GenJet_phi[j], 0)  # jet mass is negligible
+
+        # finding the closest last copy parton to this jet
+        closest_parton = min(last_copy_partons, key=lambda p: deltaR(jet.Eta(), jet.Phi(), p.Eta(), p.Phi()))
+        if deltaR(jet.Eta(), jet.Phi(), closest_parton.Eta(), closest_parton.Phi()) < 0.4:
+            matched_jets.append((jet, j)) 
+
+    return matched_jets
 
 
-
-def select_leading_jets(entry, jet_pt_cut):
-    leading_jet = None
-    second_leading_jet = None
-    highest_pt_jet = 0 
-    second_high_pt=0
-    jet_1=0
-    jet_2=0
-    for i in range(entry.nGenJet):
-        jet_pt = entry.GenJet_pt[i]
-        jet_eta = entry.GenJet_eta[i]
-        
-        if jet_pt > jet_pt_cut and abs(jet_eta) < 2.4:
-            if leading_jet is None or jet_pt > leading_jet[0]:
-                second_leading_jet = leading_jet
-                leading_jet = (jet_pt, jet_eta, i, entry.GenJet_partonFlavour[i])
-            elif second_leading_jet is None or (jet_pt > second_leading_jet[0] and jet_pt < leading_jet[0]):
-                second_leading_jet = (jet_pt, jet_eta, i, entry.GenJet_partonFlavour[i])
-
-    # if leading_jet is not None:
-    #     print("Leading Jet: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*leading_jet))
-    # if second_leading_jet is not None:
-    #     print("Second Leading Jet: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*second_leading_jet))
-  
-
-    return leading_jet, second_leading_jet  
+# This function filters and sorts the jets based on their Pt, 
+# then identifies the leading and second-leading jets.
+def select_leading_jets_from_matched(matched_jets, jet_pt_cut):
     
-def check_b_jet_from_top(leading_jet, second_leading_jet):
+    filtered_jets = [(jet, pdg_id) for jet, pdg_id in matched_jets if jet.Pt() > jet_pt_cut]
+    # Sort the matched jets by their pT in descending order
+    sorted_jets = sorted(filtered_jets, key=lambda jet_tuple: jet_tuple[0].Pt(), reverse=True)
 
-    # Check if PDG ID of either leading jet is ±5 (b or anti-b-quark)
-    return abs(leading_jet[3]) == 5 or abs(second_leading_jet[3]) == 5
+    # Select the leading and second leading jets
+    leading_jet = sorted_jets[0] if len(sorted_jets) > 0 else None
+    second_leading_jet = sorted_jets[1] if len(sorted_jets) > 1 else None
+
+    return leading_jet, second_leading_jet
+
+# This function checks if any of the b-quarks (from the b_quarks list, so it is from top) is the same as the leading or second-leading jet (identified by their indices). 
+# If it finds a match, it returns True along with the b-quark's vector (b_vector)
+# Otherwise, it returns False and None
+def check_b_jet_from_top(b_quarks, leading_jet, second_leading_jet):
+    for b_quark in b_quarks:
+        b_vector, b_index = b_quark
+        # Check if the b-quark index matches with leading or second-leading jet
+        if leading_jet and b_index == leading_jet[1]:
+            return True, b_vector
+        elif second_leading_jet and b_index == second_leading_jet[1]:
+            return True, b_vector
+    return False, None
 
 
-def find_leading_b_quark(b_quarks):
+# This function correctly identifies the leading b-quark that is not part of the leading or second-leading jets. 
+# It iterates through the b_quarks, excludes those that match the leading or second-leading jets, and then finds the one with the highest Pt.
+def find_leading_b_quark(b_quarks, leading_jet, second_leading_jet):
+    highest_pt = 0
     leading_b_quark = None
     for b_quark in b_quarks:
-        pt, eta, phi, idx = b_quark[0].Pt(), b_quark[0].Eta(), b_quark[0].Phi(), b_quark[1]
-        if pt > 30:
-            if leading_b_quark is None or pt > leading_b_quark[0]:
-                leading_b_quark = b_quark
+        b_vector, b_index = b_quark
+        # Exclude b-quarks that are already in leading or second-leading jet
+        if leading_jet and b_index == leading_jet[1] or second_leading_jet and b_index == second_leading_jet[1]:
+            continue
+        if b_vector.Pt() > highest_pt:
+            highest_pt = b_vector.Pt()
+            leading_b_quark = b_quark
     return leading_b_quark
 
 
-def passes_selection_criteria(entry, leptons, tops, channel, top_pt_cut1, top_pt_cut2, b_quarks):
-
+def passes_selection_criteria(entry, leptons, tops, channel, hadronic_top_pt, top_pt_cut1, top_pt_cut2, b_quarks, last_copy_partons):
+    
     met_cut_electron = 60
     met_cut_muon = 70
     met_cut = 0
@@ -639,78 +932,81 @@ def passes_selection_criteria(entry, leptons, tops, channel, top_pt_cut1, top_pt
     
     
     # Determine channel based on lepton type
-    is_electron_channel = any(abs(pdgId) == 11 for pt, eta, phi, pdgId in leptons)
-    is_muon_channel = any(abs(pdgId) == 13 for pt, eta, phi, pdgId in leptons)
-    
-    if is_electron_channel:
+    if channel == "electron":
         jet_pt_cut = 40
         lepton_pt_cut = 120
         lepton_eta_cut = 2.5
-        met_cut = met_cut_electron
-    
-    elif is_muon_channel:
+        met_cut = 60
+    elif channel == "muon":
         jet_pt_cut = 50
         lepton_pt_cut = 55
         lepton_eta_cut = 2.4
-        met_cut = met_cut_muon
-    
+        met_cut = 70
     else:
-        return False, False, False, "other", False, False
+        jet_pt_cut = 50
+        lepton_pt_cut = 55
+        lepton_eta_cut = 2.4
+        met_cut = 0
     
-        
- #Jet selection with last copy matching    
+    #Jet selection with last copy matching    
 
     # 1) identify first and second leading jets
-    # b_quarks = find_b_quarks_from_top(entry)
-    leading_jet, second_leading_jet = select_leading_jets(entry, jet_pt_cut)
-    if leading_jet is not None:
-        print("Leading Jet from passes_selection_criteria: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*leading_jet))
-    if second_leading_jet is not None:
-        print("Second Leading Jet from passes_selection_criteria: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*second_leading_jet))
+    matched_jets = match_jets_to_partons(entry, last_copy_partons)
+    leading_jet, second_leading_jet = select_leading_jets_from_matched(matched_jets, jet_pt_cut)
 
+    # if leading_jet is not None:
+    #     print("Leading Jet from passes_selection_criteria: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*leading_jet))
+    # if second_leading_jet is not None:
+    #     print("Second Leading Jet from passes_selection_criteria: PT = {}, ETA = {}, Index = {}, pdgId = {}".format(*second_leading_jet))
 
     # 2) check if either leading jet is a b-quark from top
     b_jet_in_leading = False
     if leading_jet is not None and second_leading_jet is not None:
-        b_jet_in_leading = check_b_jet_from_top(leading_jet, second_leading_jet)
-        print("b_jet_in_leading:", b_jet_in_leading)
-    
+            b_jet_in_leading = check_b_jet_from_top(b_quarks, leading_jet, second_leading_jet)
+            # print("b_jet_in_leading:", b_jet_in_leading)
+
     # Find the leading b-quark and check its pT
-    leading_b_quark = find_leading_b_quark(b_quarks)
+    leading_b_quark = find_leading_b_quark(b_quarks, leading_jet, second_leading_jet)
     # print("leading_b_quark:", leading_b_quark)
+    
     leading_b_quark_high_pt = leading_b_quark is not None and leading_b_quark[0] > 30
     # print("leading_b_quark_high_pt:", leading_b_quark_high_pt)
-
+    
     passed_jet_cut = False
     if leading_jet and second_leading_jet:
         if b_jet_in_leading or leading_b_quark_high_pt:
             passed_jet_cut = True
-            print("jet cut in if statement in passes_selection_criteria:", passed_jet_cut)
+            # print("jet cut in if statement in passes_selection_criteria:", passed_jet_cut)
 
     # print("leading_jet in passes_selection_criteria:", leading_jet)
     # print("second_leading_jet in passes_selection_criteria:", second_leading_jet)
     
     
-    for i in range(entry.nGenPart):
-        if abs(entry.GenPart_pdgId[i]) == 6 and entry.GenPart_pt[i] > top_pt_cut1:
-            top_pt_pass1 = True
-        if abs(entry.GenPart_pdgId[i]) == 6 and entry.GenPart_pt[i] > top_pt_cut2:
-            top_pt_pass2 = True
-    
-    for top_4vec in tops:
-        if top_4vec.Pt() > top_pt_cut1:
-            top_pt_pass1 = True
-        if top_4vec.Pt() > top_pt_cut2:
+    # for top_4vec in tops:
+    #     if top_4vec.Pt() > top_pt_cut1:
+    #         top_pt_pass1 = True
+    #     if top_4vec.Pt() > top_pt_cut2:
+    #         top_pt_pass2 = True
             
-            top_pt_pass2 = True
+    top_pt_pass1 = any(pt > top_pt_cut1 for pt in hadronic_top_pt)
+    top_pt_pass2 = any(pt > top_pt_cut2 for pt in hadronic_top_pt)
+    # print("Jet 0: ", entry.GenJet_pt[0])
+    # print("Jet 1: ", entry.GenJet_pt[1])
     
-    jet_count = sum(1 for i in range(entry.nGenJet) if entry.GenJet_pt[i] > jet_pt_cut)
+    jet_count = 0
+    if entry.nGenJet >= 2:
+        jet_count = int(entry.GenJet_pt[0] > jet_pt_cut) + int(entry.GenJet_pt[1] > jet_pt_cut)
     passed_lepton_cut = sum(1 for lepton in leptons if lepton[0] > lepton_pt_cut and abs(lepton[1]) < lepton_eta_cut) > 0
+    # print("lepton cut in if statement in passes_selection_criteria:", passed_lepton_cut)
+    # print("Lepton PT Cut:", lepton_pt_cut, "Lepton ETA Cut:", lepton_eta_cut)
+    # for lepton in leptons:
+    #     print("Lepton PT:", lepton[0], "Lepton ETA:", lepton[1])
+    #     if lepton[0] > lepton_pt_cut and abs(lepton[1]) < lepton_eta_cut:
+    #         print("Lepton passes cuts")
     passed_jet_cut = jet_count > 0
     passed_met_cut = met_pt > met_cut
-    
 
-    return passed_lepton_cut, passed_jet_cut, passed_met_cut, channel, top_pt_pass1, top_pt_pass2
+    return passed_lepton_cut, passed_jet_cut, passed_met_cut, top_pt_pass1, top_pt_pass2
 
 
 
@@ -769,8 +1065,10 @@ def analyze(filename):
     'h_antitopPt': h_antitopPt,
     'h_antitopPt_aftercut200': h_antitopPt_aftercut200,
     'h_antitopPt_aftercut400': h_antitopPt_aftercut400,
-    'h_bquark_pt': h_bquark_pt,
-    'h_bquark_eta': h_bquark_eta,
+    'h_bquark_pt_electron': h_bquark_pt_electron,
+    'h_bquark_eta_electron': h_bquark_eta_electron,
+    'h_bquark_pt_muon': h_bquark_pt_muon,
+    'h_bquark_eta_muon': h_bquark_eta_muon,
     'h_bquark_pt_aftercut200': h_bquark_pt_aftercut200,
     'h_bquark_pt_aftercut400': h_bquark_pt_aftercut400,
     'h_topMultiplicity': h_topMultiplicity,
@@ -818,14 +1116,57 @@ def analyze(filename):
     'h_ele_ttbarMass_vs_HT_aftercut200': h_ele_ttbarMass_vs_HT_aftercut200,
     'h_ele_ttbarMass_vs_HT_aftercut400': h_ele_ttbarMass_vs_HT_aftercut400,
     'h_leading_jet_pt' : h_leading_jet_pt,
-    'h_second_leading_jet_pt' : h_second_leading_jet_pt
+    'h_second_leading_jet_pt' : h_second_leading_jet_pt,
+    'h_LHE_HT_0_500_ele_withoutAK8' : h_LHE_HT_0_500_ele_withoutAK8,
+    'h_LHE_HT_500_750_ele_withoutAK8' : h_LHE_HT_500_750_ele_withoutAK8,
+    'h_LHE_HT_750_900_ele_withoutAK8' : h_LHE_HT_750_900_ele_withoutAK8,
+    'h_LHE_HT_900_1250_ele_withoutAK8' : h_LHE_HT_900_1250_ele_withoutAK8,
+    'h_LHE_HT_1250_1500_ele_withoutAK8' : h_LHE_HT_1250_1500_ele_withoutAK8,
+    'h_LHE_HT_1500_up_ele_withoutAK8' : h_LHE_HT_1500_up_ele_withoutAK8,
+    'h_LHE_HT_0_500_ele_AK8200' : h_LHE_HT_0_500_ele_AK8200,
+    'h_LHE_HT_500_750_ele_AK8200' : h_LHE_HT_500_750_ele_AK8200,
+    'h_LHE_HT_750_900_ele_AK8200' : h_LHE_HT_750_900_ele_AK8200,
+    'h_LHE_HT_900_1250_ele_AK8200' : h_LHE_HT_900_1250_ele_AK8200,
+    'h_LHE_HT_1250_1500_ele_AK8200' : h_LHE_HT_1250_1500_ele_AK8200,
+    'h_LHE_HT_1500_up_ele_AK8200' : h_LHE_HT_1500_up_ele_AK8200,
+    'h_LHE_HT_0_500_ele_AK8400' : h_LHE_HT_0_500_ele_AK8400,
+    'h_LHE_HT_500_750_ele_AK8400' : h_LHE_HT_500_750_ele_AK8400,
+    'h_LHE_HT_750_900_ele_AK8400' : h_LHE_HT_750_900_ele_AK8400,
+    'h_LHE_HT_900_1250_ele_AK8400' : h_LHE_HT_900_1250_ele_AK8400,
+    'h_LHE_HT_1250_1500_ele_AK8400' : h_LHE_HT_1250_1500_ele_AK8400,
+    'h_LHE_HT_1500_up_ele_AK8400' : h_LHE_HT_1500_up_ele_AK8400,
+    'h_LHE_HT_0_500_muon_withoutAK8' : h_LHE_HT_0_500_muon_withoutAK8,
+    'h_LHE_HT_500_750_muon_withoutAK8' : h_LHE_HT_500_750_muon_withoutAK8,
+    'h_LHE_HT_750_900_muon_withoutAK8' : h_LHE_HT_750_900_muon_withoutAK8,
+    'h_LHE_HT_900_1250_muon_withoutAK8' : h_LHE_HT_900_1250_muon_withoutAK8,
+    'h_LHE_HT_1250_1500_muon_withoutAK8' : h_LHE_HT_1250_1500_muon_withoutAK8,
+    'h_LHE_HT_1500_up_muon_withoutAK8' : h_LHE_HT_1500_up_muon_withoutAK8,
+    'h_LHE_HT_0_500_muon_AK8200' : h_LHE_HT_0_500_muon_AK8200,
+    'h_LHE_HT_500_750_muon_AK8200' : h_LHE_HT_500_750_muon_AK8200,
+    'h_LHE_HT_750_900_muon_AK8200' : h_LHE_HT_750_900_muon_AK8200,
+    'h_LHE_HT_900_1250_muon_AK8200' : h_LHE_HT_900_1250_muon_AK8200,
+    'h_LHE_HT_1250_1500_muon_AK8200' : h_LHE_HT_1250_1500_muon_AK8200,
+    'h_LHE_HT_1500_up_muon_AK8200' : h_LHE_HT_1500_up_muon_AK8200,
+    'h_LHE_HT_0_500_muon_AK8400' : h_LHE_HT_0_500_muon_AK8400,
+    'h_LHE_HT_500_750_muon_AK8400' : h_LHE_HT_500_750_muon_AK8400,
+    'h_LHE_HT_750_900_muon_AK8400' : h_LHE_HT_750_900_muon_AK8400,
+    'h_LHE_HT_900_1250_muon_AK8400' : h_LHE_HT_900_1250_muon_AK8400,
+    'h_LHE_HT_1250_1500_muon_AK8400' : h_LHE_HT_1250_1500_muon_AK8400,
+    'h_LHE_HT_1500_up_muon_AK8400' : h_LHE_HT_1500_up_muon_AK8400,
+    'h_leading_jet_pt_electron' : h_leading_jet_pt_electron,
+    'h_second_leading_jet_pt_electron' : h_second_leading_jet_pt_electron,
+    'h_leading_jet_pt_muon' : h_leading_jet_pt_muon,
+    'h_second_leading_jet_pt_muon' : h_second_leading_jet_pt_muon
+    
     
     
 }
     
     for entry in tree:
         process_event(entry, histograms, relevant_pdgIds)
-        
+    
+    
+
     
     file.Close()
     
@@ -838,7 +1179,7 @@ output_file = ROOT.TFile("output_histograms.root", "RECREATE")
     
 path = "/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/EFT_samples/nanogen_folder/nano_files/1j1l_NoHT/"
 root_files = [f for f in os.listdir(path) if f.endswith('.root')]
-root_files = root_files[:1]
+root_files = root_files[:2]
 
 for root_file in root_files:
     full_path = os.path.join(path, root_file)
@@ -857,79 +1198,4 @@ for name, hist in all_histograms.items():
 
 output_file.Close()
     
-    # for name, hist in histograms.items():
-    #     canvas_title = "{} Canvas".format(name)
-    #     canvas_filename = "{}.png".format(name)
-    #     createCanvas(hist, canvas_title, canvas_filename, output_dir=output_dir)
-
-
-# createCanvas(h_leptonPt, "Lepton pT Distribution", "leptonPtDistribution.png", True)
-# createCanvas(h_leptoneta, "Lepton Eta Distribution", "leptonEtaDistribution.png")
-# createCanvas(h_leptonphi, "Lepton Phi Distribution", "leptonPhiDistribution.png")
-# createCanvas(h_leptonFlavor, "Lepton Flavor Distribution", "leptonFlavorDistribution.png")
-# createCanvas(h_electronPt, "Electron pT Distribution", "electronPtDistribution.png", True)
-# createCanvas(h_electronPt_aftercut200, "Electron pT After Cut 200 Distribution", "electronPtAfterCut200Distribution.png", True)
-# createCanvas(h_electronPt_aftercut400, "Electron pT After Cut 400 Distribution", "electronPtAfterCut400Distribution.png", True)
-# createCanvas(h_electroneta, "Electron Eta Distribution", "electronEtaDistribution.png")
-# createCanvas(h_electroneta_aftercut200, "Electron Eta After Cut 200 Distribution", "electronEtaAfterCut200Distribution.png")
-# createCanvas(h_electroneta_aftercut400, "Electron Eta After Cut 400 Distribution", "electronEtaAfterCut400Distribution.png")
-# createCanvas(h_muonPt, "Muon pT Distribution", "muonPtDistribution.png", True)
-# createCanvas(h_muonPt_aftercut200, "Muon pT After Cut 200 Distribution", "muonPtAfterCut200Distribution.png", True)
-# createCanvas(h_muonPt_aftercut400, "Muon pT After Cut 400 Distribution", "muonPtAfterCut400Distribution.png", True)
-# createCanvas(h_muoneta, "Muon Eta Distribution", "muonEtaDistribution.png")
-# createCanvas(h_muoneta_aftercut200, "Muon Eta After Cut 200 Distribution", "muonEtaAfterCut200Distribution.png")
-# createCanvas(h_muoneta_aftercut400, "Muon Eta After Cut 400 Distribution", "muonEtaAfterCut400Distribution.png")
-# createCanvas(h_hadronic_w_mass, "Hadronic Decaying W Mass Before Cuts", "hadronicWMassDistribution.png")
-# createCanvas(h_hadronic_w_mass_aftercut200, "Hadronic Decaying W Mass After Cuts & TopPt>200", "hadronicWMassAfterCut200Distribution.png")
-# createCanvas(h_hadronic_w_mass_aftercut400, "Hadronic Decaying W Mass After Cuts & TopPt>400", "hadronicWMassAfterCut400Distribution.png")
-# createCanvas(h_topPt, "Top Quark pT Before Cuts", "topPtDistribution.png", True)
-# createCanvas(h_topPt_aftercut200, "Top Quark pT After Cuts & TopPt>200", "topPtAfterCut200Distribution.png", True)
-# createCanvas(h_topPt_aftercut400, "Top Quark pT After Cuts & TopPt>400", "topPtAfterCut400Distribution.png", True)
-# createCanvas(h_antitopPt, "Anti-Top Quark pT Before Cuts", "antitopPtDistribution.png", True)
-# createCanvas(h_antitopPt_aftercut200, "Anti-Top Quark pT After Cuts & TopPt>200", "antitopPtAfterCut200Distribution.png", True)
-# createCanvas(h_antitopPt_aftercut400, "Anti-Top Quark pT After Cuts & TopPt>400", "antitopPtAfterCut400Distribution.png", True)
-# createCanvas(h_bquark_pt, "b-quark pT Before Cuts", "bquarkPtDistribution.png", True)
-# createCanvas(h_bquark_eta, "b-quark Eta Before Cuts", "bquarkEtaDistribution.png")
-# createCanvas(h_bquark_pt_aftercut200, "b-quark pT After Cuts & TopPt>200", "bquarkPtAfterCut200Distribution.png", True)
-# createCanvas(h_bquark_pt_aftercut400, "b-quark pT After Cuts & TopPt>400", "bquarkPtAfterCut400Distribution.png", True)
-# createCanvas(h_topMultiplicity, "Top Multiplicity Before Cuts", "topMultiplicityDistribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_topMultiplicity_aftercut200, "Top Multiplicity After Cuts & TopPt>200", "topMultiplicityAfterCut200Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_topMultiplicity_aftercut400, "Top Multiplicity After Cuts & TopPt>400", "topMultiplicityAfterCut400Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_antitopMultiplicity, "Anti-Top Multiplicity Before Cuts", "antitopMultiplicityDistribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_antitopMultiplicity_aftercut200, "Anti-Top Multiplicity After Cuts & Pt>200", "antitopMultiplicityAfterCut200Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_antitopMultiplicity_aftercut400, "Anti-Top Multiplicity After Cuts & Pt>400", "antitopMultiplicityAfterCut400Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_jetMultiplicity_fromW, "Jet Multiplicity from W Before Cuts", "jetMultiplicityFromWDistribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_jetMultiplicity_fromW_after200, "Jet Multiplicity from W After Cuts & Pt>200", "jetMultiplicityFromWAfterCut200Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_jetMultiplicity_fromW_after400, "Jet Multiplicity from W After Cuts & Pt>400", "jetMultiplicityFromWAfterCut400Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_MET, "MET Before Cuts", "METDistribution.png")
-# createCanvas(h_MET_after200, "MET After Cuts & Pt>200", "METAfterCut200Distribution.png")
-# createCanvas(h_MET_after400, "MET After Cuts & Pt>400", "METAfterCut400Distribution.png")
-# createCanvas(h_invariantMass, "Invariant Mass", "invariantMassDistribution.png", True)
-# createCanvas(h_invariantMass_aftercut200, "Invariant Mass After Cuts & Pt>200", "invariantMassAfterCut200Distribution.png", True)
-# createCanvas(h_invariantMass_aftercut400, "Invariant Mass After Cuts & Pt>400", "invariantMassAfterCut400Distribution.png", True)
-# createCanvas(h_jetMultiplicity, "Jet Multiplicity Without Cuts", "jetMultiplicityDistribution.png", True, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_nonTopMotherJets, "Jets without Top as Mother", "nonTopMotherJetsDistribution.png")
-# createCanvas(h_LHE_HT_before, "LHE_HT Before Cuts", "LHE_HTBeforeCutsDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_aftercut200, "Muon Channel LHE_HT After Cuts & Pt>200", "muonLHE_HTAfterCut200Distribution.png", True)
-# createCanvas(h_muon_LHE_HT_aftercut400, "Muon Channel LHE_HT After Cuts & Pt>400", "muonLHE_HTAfterCut400Distribution.png", True)
-# createCanvas(h_ele_LHE_HT_aftercut200, "Electron Channel LHE_HT After Cuts & Pt>200", "eleLHE_HTAfterCut200Distribution.png", True)
-# createCanvas(h_ele_LHE_HT_aftercut400, "Electron Channel LHE_HT After Cuts & Pt>400", "eleLHE_HTAfterCut400Distribution.png", True)
-# createCanvas(h_ele_LHE_HT_before, "Electron Channel LHE_HT", "eleLHE_HTBeforeCutsDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_lepton_cut, "Electron Channel LHE_HT After Electron Pt&Eta Cut", "eleLHE_HTAfterLeptonCutDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_jet_cut, "Electron Channel LHE_HT After Electron and Jet Cuts", "eleLHE_HTAfterJetCutDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_met_cut, "Electron Channel LHE_HT After Electron, Jet, and MET Cut", "eleLHE_HTAfterMETCutDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_toppt200_cut, "Electron Channel LHE_HT After Cuts & Pt>200", "eleLHE_HTAfterTopPt200CutDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_toppt400_cut, "Electron Channel LHE_HT After Cuts & Pt>400", "eleLHE_HTAfterTopPt400CutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_before, "Muon Channel LHE_HT", "muonLHE_HTBeforeCutsDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_lepton_cut, "Muon Channel LHE_HT After Muon Pt&Eta Cut", "muonLHE_HTAfterLeptonCutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_jet_cut, "Muon Channel LHE_HT After Muon and Jet Cuts", "muonLHE_HTAfterJetCutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_met_cut, "Muon Channel LHE_HT After Muon, Jet, and MET Cut", "muonLHE_HTAfterMETCutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_toppt200_cut, "Muon Channel LHE_HT After Cuts & Pt>200", "muonLHE_HTAfterTopPt200CutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_toppt400_cut, "Muon Channel LHE_HT After Cuts & Pt>400", "muonLHE_HTAfterTopPt400CutDistribution.png", True)
-# createCanvas(h_both_decays, "Events with Both Leptonic and Hadronic Decays", "bothdecays.png", False )     
-# createCanvas(h_jetFromW_pt, "Jet pT from W Before Cuts; pT (GeV)", "jetfromW_pt.png")
-# createCanvas(h_jetFromW_eta,"Jet Eta from W Before Cuts", "jetfromW_eta.png")
-# createCanvas(h_jetFromW_pt_aftercut200, "Jet pT from W After Cuts & TopPt>200; pT (GeV)", "jetfromW_pt_after200.png")
-# createCanvas(h_jetFromW_pt_aftercut400, "Jet pT from W After Cuts & TopPt>400; pT (GeV)", "jetfromW_pt_after400.png") 
-       
 print("Total number of events:", totalEvents)
