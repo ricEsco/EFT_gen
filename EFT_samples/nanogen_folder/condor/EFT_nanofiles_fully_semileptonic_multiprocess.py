@@ -19,7 +19,7 @@ ROOT.gROOT.SetBatch(True)
 
 totalEvents = 0
 
-output_dir = "/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/plots_all"
+output_dir = "/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/plots_comparePowheg"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
@@ -195,7 +195,8 @@ h_LHE_HT_1500_up_muon_AK8400 = ROOT.TH1F("h_LHE_HT_1500_up_muon_AK8400", "LHE_HT
 h_jet_multiplicity_last_copy = ROOT.TH1F('h_jet_multiplicity_last_copy', 'Jet Multiplicity Last Copy;Number of Jets;Events', 10, 0, 10)
 h_jet_multiplicity_30pt = ROOT.TH1F('h_jet_multiplicity_30pt', 'Gen Jet Multiplicity Pt>30GeV, abs(eta) < 3;Number of Jets;Events', 10, 0, 10)
   
-  
+h_mtt_vs_LHEHT = ROOT.TH2F("h_mtt_vs_LHEHT", "Invariant Mass of ttbar vs. LHE HT;LHE HT (GeV);m_{tt} (GeV)", 50, 0, 1000, 50, 300, 5000)
+
 def deltaR(eta1, phi1, eta2, phi2):
     deta = eta1 - eta2
     dphi = abs(phi1 - phi2)
@@ -215,7 +216,13 @@ def deltaR(eta1, phi1, eta2, phi2):
 
 both_decays_counter = 0
 
-
+def passes_selection_HT(entry):
+    LHE_HT = getattr(entry, "LHE_HT", -1)
+                
+    if LHE_HT < 800:
+        return False
+    
+    return True
 
 def is_last_copy(statusFlags):
     try:
@@ -225,6 +232,8 @@ def is_last_copy(statusFlags):
         return False
 
 def process_event(entry, histograms, relevant_pdgIds):
+    # if not passes_selection_HT(entry):
+    #     return
     
     top_count = 0
     antitop_count = 0
@@ -268,7 +277,17 @@ def process_event(entry, histograms, relevant_pdgIds):
     
     electron_found = False
     muon_found = False
+
+    # Find the indices for the top and antitop quarks
+    top_idx = None
+    antitop_idx = None
     
+    top_4vec = None
+    antitop_4vec = None
+    
+    event_weight = 1.0
+    
+
     # processing particles
     for i in range(entry.nGenPart):
         pdgId = entry.GenPart_pdgId[i]
@@ -288,17 +307,28 @@ def process_event(entry, histograms, relevant_pdgIds):
         
         # Check if particle is a top or antitop quark
         if abs(pdgId) in relevant_pdgIds and is_last_copy(statusFlags):  
-            if abs(pdgId) == 6: 
+            if abs(pdgId) == 6:
                 
-                top_4vec = ROOT.TLorentzVector()
-                top_4vec.SetPtEtaPhiM(pt, eta, phi, mass)
-                tops.append((top_4vec, pdgId))
+                # top_4vec = ROOT.TLorentzVector()
+                # top_4vec.SetPtEtaPhiM(pt, eta, phi, mass)
+                
                 w_daughter = None
                 b_daughter = None
                 last_copy_top_decays.append((pt, eta, phi))
                 
                 has_leptonic_w_decay = False
                 has_hadronic_w_decay = False
+                
+                vec = ROOT.TLorentzVector()
+                vec.SetPtEtaPhiM(entry.GenPart_pt[i], entry.GenPart_eta[i], entry.GenPart_phi[i], entry.GenPart_mass[i])
+                if pdgId == 6:
+                    top_4vec = vec
+                else:
+                    antitop_4vec = vec
+                    
+                tops.append((top_4vec, pdgId))
+                
+                
 
                 # Checking if the j-th particle is a daughter of the i-th particle (top or anti-top quark)
                 for j in range(entry.nGenPart):
@@ -412,6 +442,16 @@ def process_event(entry, histograms, relevant_pdgIds):
                 continue  
         else:
             continue
+        
+    # if top_4vec and antitop_4vec:
+    #     ttbar = top_4vec + antitop_4vec
+    #     m_tt = ttbar.M()
+
+    #     histograms['h_invariantMass'].Fill(ttbar.M())
+        
+    #     LHE_HT = getattr(entry, "LHE_HT", -1)
+    #     if LHE_HT >= 0:
+    #         histograms['h_mtt_vs_LHEHT'].Fill(LHE_HT, m_tt)
     
     # print("Leptons:", leptons)
     # print("Leptons len :", len(leptons))
@@ -500,6 +540,7 @@ def process_event(entry, histograms, relevant_pdgIds):
         for top_4vec, pdgId in tops:
             if pdgId == 6:
                 top_count += 1
+                top_idx = i
                 histograms['h_topPt'].Fill(top_4vec.Pt())
                 histograms['h_topEta'].Fill(top_4vec.Eta())
                 if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
@@ -519,18 +560,19 @@ def process_event(entry, histograms, relevant_pdgIds):
                 
             elif pdgId == -6:
                 antitop_count += 1
-                histograms['h_antitopPt'].Fill(top_4vec.Pt())
-                histograms['h_antitopEta'].Fill(top_4vec.Eta())
+                antitop_idx = i
+                histograms['h_antitopPt'].Fill(antitop_4vec.Pt())
+                histograms['h_antitopEta'].Fill(antitop_4vec.Eta())
                 if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
-                    histograms['h_antitopPt_aftercut200'].Fill(top_4vec.Pt())
-                    histograms['h_antitopEta_aftercut'].Fill(top_4vec.Eta())
+                    histograms['h_antitopPt_aftercut200'].Fill(antitop_4vec.Pt())
+                    histograms['h_antitopEta_aftercut'].Fill(antitop_4vec.Eta())
                     antitop_count_aftercut200 += 1
                 # if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
                 #     histograms['h_antitopPt_aftercut400'].Fill(top_4vec.Pt())
                 #     antitop_count_aftercut400 += 1
                 if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
-                    histograms['h_antitopPt_aftercut200'].Fill(top_4vec.Pt())
-                    histograms['h_antitopEta_aftercut'].Fill(top_4vec.Eta())
+                    histograms['h_antitopPt_aftercut200'].Fill(antitop_4vec.Pt())
+                    histograms['h_antitopEta_aftercut'].Fill(antitop_4vec.Eta())
                     antitop_count_aftercut200 += 1
                 # if channel == "muon" and passed_lepton_cut and passed_jet_cut and passed_met_cut and top_pt_pass2:
                 #     histograms['h_antitopPt_aftercut400'].Fill(top_4vec.Pt())
@@ -616,21 +658,32 @@ def process_event(entry, histograms, relevant_pdgIds):
         #     histograms['h_MET_after400'].Fill(met_vector.Pt()) 
         
             
-        
-        if top_count > 0 and antitop_count > 0:
-            top_idx = next((idx for idx, pdg in enumerate(entry.GenPart_pdgId) if pdg == 6), None)
-            antitop_idx = next((idx for idx, pdg in enumerate(entry.GenPart_pdgId) if pdg == -6), None)
-            if top_idx is not None and antitop_idx is not None:
-                antitop_4vec = ROOT.TLorentzVector()
-                top_4vec.SetPtEtaPhiM(entry.GenPart_pt[top_idx], entry.GenPart_eta[top_idx], entry.GenPart_phi[top_idx], entry.GenPart_mass[top_idx])
-                antitop_4vec.SetPtEtaPhiM(entry.GenPart_pt[antitop_idx], entry.GenPart_eta[antitop_idx], entry.GenPart_phi[antitop_idx], entry.GenPart_mass[antitop_idx])
-                ttbar = top_4vec + antitop_4vec
-                m_tt = ttbar.M()
+        if top_4vec and antitop_4vec:
+            ttbar = top_4vec + antitop_4vec
+            m_tt = ttbar.M()
+
+            histograms['h_invariantMass'].Fill(ttbar.M())
+            
+            LHE_HT = getattr(entry, "LHE_HT", -1)
+            if LHE_HT >= 0:
+                histograms['h_mtt_vs_LHEHT'].Fill(LHE_HT, m_tt)
+
+            # Loop to find and set four-vectors for top and antitop quarks
+            # for i in range(entry.nGenPart):
+            #     pdgId = entry.GenPart_pdgId[i]
+            #     if pdgId == 6: 
+            #         top_4vec.SetPtEtaPhiM(entry.GenPart_pt[i], entry.GenPart_eta[i], entry.GenPart_phi[i], entry.GenPart_mass[i])
+            #     elif pdgId == -6: 
+            #         antitop_4vec.SetPtEtaPhiM(entry.GenPart_pt[i], entry.GenPart_eta[i], entry.GenPart_phi[i], entry.GenPart_mass[i])
+
+                # ttbar = top_4vec + antitop_4vec
+                # m_tt = ttbar.M()
                 p_tt = ttbar.Pt()
                 eta_tt = ttbar.Eta()
                 
+                
                 if ttbar is not None:
-                    histograms['h_invariantMass'].Fill(ttbar.M())
+              
                     if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
                         histograms['h_invariantMass_aftercut200'].Fill(ttbar.M())
                         histograms['h_ttbar_pt'].Fill(p_tt)
@@ -646,6 +699,7 @@ def process_event(entry, histograms, relevant_pdgIds):
                     
                 LHE_HT = getattr(entry, "LHE_HT", -1)
                 if LHE_HT >= 0:
+                    # histograms['h_mtt_vs_LHEHT'].Fill(LHE_HT, m_tt)
                     if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
                         if 0 <= m_tt < 500:
                             histograms['h_LHE_HT_0_500_ele_withoutAK8'].Fill(LHE_HT)
@@ -1066,7 +1120,6 @@ def analyze(filename):
             return None
 
         tree = file.Get("Events")
-        # Your existing code here...
         
     except Exception as e:
         print "An error occurred while processing the file {}: {}".format(filename, str(e))
@@ -1076,7 +1129,7 @@ def analyze(filename):
     totalEvents += tree.GetEntries()
     print("Number of events in file:", tree.GetEntries())
     
-    relevant_pdgIds = {12, 14, 16, 24, 1, 2, 3, 4, 5, 6, 21, 11, 13, 15}
+     = {12, 14, 16, 24, 1relevant_pdgIds, 2, 3, 4, 5, 6, 21, 11, 13, 15}
     
     histograms = {
     'h_leptonPt': h_leptonPt,
@@ -1203,7 +1256,8 @@ def analyze(filename):
     'h_leading_jet_pt_muon' : h_leading_jet_pt_muon,
     'h_second_leading_jet_pt_muon' : h_second_leading_jet_pt_muon,
     "h_jet_multiplicity_last_copy" : h_jet_multiplicity_last_copy,
-    "h_jet_multiplicity_30pt" : h_jet_multiplicity_30pt
+    "h_jet_multiplicity_30pt" : h_jet_multiplicity_30pt,
+    "h_mtt_vs_LHEHT" : h_mtt_vs_LHEHT,
     
     
     
@@ -1238,7 +1292,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     input_filename = sys.argv[1]
-    output_dir = "/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/plots_all"
+    output_dir = "/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/plots_comparePowheg"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
