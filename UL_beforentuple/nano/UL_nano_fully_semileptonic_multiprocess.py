@@ -142,8 +142,8 @@ h_muon_ttbarMass_vs_HT_aftercut400 = ROOT.TH2F("h_muon_ttbarMass_vs_HT_aftercut4
 h_ele_ttbarMass_vs_HT_aftercut200 = ROOT.TH2F("h_ele_ttbarMass_vs_HT_aftercut200", "t#bar{t} Mass vs HT Electron Channel After Cuts & TopPt>200;HT (GeV);t#bar{t} Mass (GeV)", 100, 0, 3000, 100, 0, 7000)
 h_ele_ttbarMass_vs_HT_aftercut400 = ROOT.TH2F("h_ele_ttbarMass_vs_HT_aftercut400", "t#bar{t} Mass vs HT Electron Channel After Cuts & TopPt>400;HT (GeV);t#bar{t} Mass (GeV)", 100, 0, 3000, 100, 0, 7000)
 
-h_leading_jet_pt=  ROOT.TH1F("h_leading_jet_pt", "Leading Jet pT ; pT (GeV);Events", 100, 0, 1000)
-h_second_leading_jet_pt =  ROOT.TH1F("h_second_leading_jet_pt", "Second Leading Jet pT ; pT (GeV);Events", 100, 0, 1000)
+h_leading_jet_pt = ROOT.TH1F("h_leading_jet_pt", "Leading Jet pT; pT (GeV);Events", 100, 0, 1000)
+h_second_leading_jet_pt = ROOT.TH1F("h_second_leading_jet_pt", "Second Leading Jet pT; pT (GeV);Events", 100, 0, 1000)
 
 h_leading_jet_pt_electron = ROOT.TH1F("h_leading_jet_pt_electron", "Leading Jet pT Electron Channel; pT (GeV);Events", 100, 0, 1000)
 h_second_leading_jet_pt_electron = ROOT.TH1F("h_second_leading_jet_pt_electron", "Second Leading Jet pT Electron Channel; pT (GeV);Events", 100, 0, 1000)
@@ -197,7 +197,8 @@ h_LHE_HT_1500_up_muon_AK8400 = ROOT.TH1F("h_LHE_HT_1500_up_muon_AK8400", "LHE_HT
 h_jet_multiplicity_last_copy = ROOT.TH1F('h_jet_multiplicity_last_copy', 'Jet Multiplicity Last Copy;Number of Jets;Events', 10, 0, 10)
 h_jet_multiplicity_30pt = ROOT.TH1F('h_jet_multiplicity_30pt', 'Gen Jet Multiplicity Pt>30GeV, abs(eta) < 3;Number of Jets;Events', 10, 0, 10)
   
-  
+h_mtt_vs_LHEHT = ROOT.TH2F("h_mtt_vs_LHEHT", "Invariant Mass of ttbar vs. LHE HT;LHE HT (GeV);m_{tt} (GeV)", 50, 0, 1000, 50, 300, 5000)
+
 def deltaR(eta1, phi1, eta2, phi2):
     deta = eta1 - eta2
     dphi = abs(phi1 - phi2)
@@ -217,7 +218,13 @@ def deltaR(eta1, phi1, eta2, phi2):
 
 both_decays_counter = 0
 
-
+def passes_selection_HT(entry):
+    LHE_HT = getattr(entry, "LHE_HT", -1)
+                
+    if LHE_HT < 800:
+        return False
+    
+    return True
 
 def is_last_copy(statusFlags):
     try:
@@ -227,6 +234,8 @@ def is_last_copy(statusFlags):
         return False
 
 def process_event(entry, histograms, relevant_pdgIds):
+    if not passes_selection_HT(entry):
+        return
     
     top_count = 0
     antitop_count = 0
@@ -270,6 +279,10 @@ def process_event(entry, histograms, relevant_pdgIds):
     
     electron_found = False
     muon_found = False
+
+    # Find the indices for the top and antitop quarks
+    top_idx = None
+    antitop_idx = None
     
     # processing particles
     for i in range(entry.nGenPart):
@@ -301,6 +314,8 @@ def process_event(entry, histograms, relevant_pdgIds):
                 
                 has_leptonic_w_decay = False
                 has_hadronic_w_decay = False
+                
+                
 
                 # Checking if the j-th particle is a daughter of the i-th particle (top or anti-top quark)
                 for j in range(entry.nGenPart):
@@ -502,6 +517,7 @@ def process_event(entry, histograms, relevant_pdgIds):
         for top_4vec, pdgId in tops:
             if pdgId == 6:
                 top_count += 1
+                top_idx = i
                 histograms['h_topPt'].Fill(top_4vec.Pt())
                 histograms['h_topEta'].Fill(top_4vec.Eta())
                 if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
@@ -521,6 +537,7 @@ def process_event(entry, histograms, relevant_pdgIds):
                 
             elif pdgId == -6:
                 antitop_count += 1
+                antitop_idx = i
                 histograms['h_antitopPt'].Fill(top_4vec.Pt())
                 histograms['h_antitopEta'].Fill(top_4vec.Eta())
                 if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
@@ -620,19 +637,28 @@ def process_event(entry, histograms, relevant_pdgIds):
             
         
         if top_count > 0 and antitop_count > 0:
-            top_idx = next((idx for idx, pdg in enumerate(entry.GenPart_pdgId) if pdg == 6), None)
-            antitop_idx = next((idx for idx, pdg in enumerate(entry.GenPart_pdgId) if pdg == -6), None)
-            if top_idx is not None and antitop_idx is not None:
-                antitop_4vec = ROOT.TLorentzVector()
-                top_4vec.SetPtEtaPhiM(entry.GenPart_pt[top_idx], entry.GenPart_eta[top_idx], entry.GenPart_phi[top_idx], entry.GenPart_mass[top_idx])
-                antitop_4vec.SetPtEtaPhiM(entry.GenPart_pt[antitop_idx], entry.GenPart_eta[antitop_idx], entry.GenPart_phi[antitop_idx], entry.GenPart_mass[antitop_idx])
+            # top_idx = next((idx for idx, pdg in enumerate(entry.GenPart_pdgId) if pdg == 6), None)
+            # antitop_idx = next((idx for idx, pdg in enumerate(entry.GenPart_pdgId) if pdg == -6), None)
+            top_4vec = ROOT.TLorentzVector()
+            antitop_4vec = ROOT.TLorentzVector()
+
+            # Loop to find and set four-vectors for top and antitop quarks
+            for i in range(entry.nGenPart):
+                pdgId = entry.GenPart_pdgId[i]
+                if pdgId == 6: 
+                    top_4vec.SetPtEtaPhiM(entry.GenPart_pt[i], entry.GenPart_eta[i], entry.GenPart_phi[i], entry.GenPart_mass[i])
+                elif pdgId == -6: 
+                    antitop_4vec.SetPtEtaPhiM(entry.GenPart_pt[i], entry.GenPart_eta[i], entry.GenPart_phi[i], entry.GenPart_mass[i])
+
                 ttbar = top_4vec + antitop_4vec
                 m_tt = ttbar.M()
                 p_tt = ttbar.Pt()
                 eta_tt = ttbar.Eta()
                 
+                histograms['h_invariantMass'].Fill(ttbar.M())
+                
                 if ttbar is not None:
-                    histograms['h_invariantMass'].Fill(ttbar.M())
+                    
                     if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
                         histograms['h_invariantMass_aftercut200'].Fill(ttbar.M())
                         histograms['h_ttbar_pt'].Fill(p_tt)
@@ -647,7 +673,9 @@ def process_event(entry, histograms, relevant_pdgIds):
                     #     histograms['h_invariantMass_aftercut400'].Fill(ttbar.M())
                     
                 LHE_HT = getattr(entry, "LHE_HT", -1)
+                
                 if LHE_HT >= 0:
+                    histograms['h_mtt_vs_LHEHT'].Fill(LHE_HT, m_tt)
                     histograms['h_LHE_HT'].Fill(LHE_HT)
                     if channel == "electron" and passed_lepton_cut and passed_jet_cut and passed_met_cut:
                         if 0 <= m_tt < 500:
@@ -836,15 +864,12 @@ def process_event(entry, histograms, relevant_pdgIds):
                     histograms['h_muon_LHE_HT_after_toppt400_cut'].Fill(LHE_HT)
 
             if leading_jet is not None and second_leading_jet is not None:
-                # if leading_jet:
-                #     histograms['h_leading_jet_pt'].Fill(leading_jet[0].Pt()) #leading_jet[0] contains the pt of the leading jet
-                # if second_leading_jet:
-                #     histograms['h_second_leading_jet_pt'].Fill(second_leading_jet[0].Pt())
+                if leading_jet:
+                    histograms['h_leading_jet_pt'].Fill(leading_jet[0].Pt()) #leading_jet[0] contains the pt of the leading jet
+                if second_leading_jet:
+                    histograms['h_second_leading_jet_pt'].Fill(second_leading_jet[0].Pt())
                 
                 if len(leptons)>0:  
-                    histograms['h_leading_jet_pt'].Fill(leading_jet[0].Pt()) #leading_jet[0] contains the pt of the leading jet
-                    histograms['h_second_leading_jet_pt'].Fill(leading_jet[0].Pt()) #leading_jet[0] contains the pt of the leading jet
-
                     if channel == "electron":
                         if leading_jet:
                             histograms['h_leading_jet_pt_electron'].Fill(leading_jet[0].Pt()) #leading_jet[0] contains the pt of the leading jet
@@ -1072,7 +1097,6 @@ def analyze(filename):
             return None
 
         tree = file.Get("Events")
-        # Your existing code here...
         
     except Exception as e:
         print "An error occurred while processing the file {}: {}".format(filename, str(e))
@@ -1219,6 +1243,9 @@ def analyze(filename):
     for entry in tree:
         process_event(entry, histograms, relevant_pdgIds)
     
+    
+
+    
     file.Close()
     
     return histograms
@@ -1238,7 +1265,7 @@ def createCanvas(histogram, title, filename, logy=False, fillColor=None, lineCol
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python UL_nano_fully_semileptonic.py <input file>")
+        print("Usage: python UL_nano_fully_semileptonic_multiprocess.py <input file>")
         sys.exit(1)
 
     input_filename = sys.argv[1]
@@ -1251,16 +1278,88 @@ if __name__ == "__main__":
     output_filename = os.path.basename(input_filename).replace('.root', '_histograms.root')
     output_file_path = os.path.join(output_dir, output_filename)
     output_file = ROOT.TFile(output_file_path, "RECREATE")
-    
-    if histograms is None:
-        print("Warning: 'histograms' was None. Initializing to an empty dictionary.")
-    histograms = {}
-
     for name, hist in histograms.items():
         hist.SetDirectory(output_file)
         hist.Write()
     output_file.Close()
     
+    # for name, hist in histograms.items():
+    #     canvas_title = "{} Canvas".format(name)
+    #     canvas_filename = "{}.png".format(name)
+    #     createCanvas(hist, canvas_title, canvas_filename, output_dir=output_dir)
+
     print("Processed: {}".format(input_filename))
-    
+
+# createCanvas(h_leptonPt, "Lepton pT Distribution", "leptonPtDistribution.png", True)
+# createCanvas(h_leptoneta, "Lepton Eta Distribution", "leptonEtaDistribution.png")
+# createCanvas(h_leptonphi, "Lepton Phi Distribution", "leptonPhiDistribution.png")
+# createCanvas(h_leptonFlavor, "Lepton Flavor Distribution", "leptonFlavorDistribution.png")
+# createCanvas(h_electronPt, "Electron pT Distribution", "electronPtDistribution.png", True)
+# createCanvas(h_electronPt_aftercut200, "Electron pT After Cut 200 Distribution", "electronPtAfterCut200Distribution.png", True)
+# createCanvas(h_electronPt_aftercut400, "Electron pT After Cut 400 Distribution", "electronPtAfterCut400Distribution.png", True)
+# createCanvas(h_electroneta, "Electron Eta Distribution", "electronEtaDistribution.png")
+# createCanvas(h_electroneta_aftercut200, "Electron Eta After Cut 200 Distribution", "electronEtaAfterCut200Distribution.png")
+# createCanvas(h_electroneta_aftercut400, "Electron Eta After Cut 400 Distribution", "electronEtaAfterCut400Distribution.png")
+# createCanvas(h_muonPt, "Muon pT Distribution", "muonPtDistribution.png", True)
+# createCanvas(h_muonPt_aftercut200, "Muon pT After Cut 200 Distribution", "muonPtAfterCut200Distribution.png", True)
+# createCanvas(h_muonPt_aftercut400, "Muon pT After Cut 400 Distribution", "muonPtAfterCut400Distribution.png", True)
+# createCanvas(h_muoneta, "Muon Eta Distribution", "muonEtaDistribution.png")
+# createCanvas(h_muoneta_aftercut200, "Muon Eta After Cut 200 Distribution", "muonEtaAfterCut200Distribution.png")
+# createCanvas(h_muoneta_aftercut400, "Muon Eta After Cut 400 Distribution", "muonEtaAfterCut400Distribution.png")
+# createCanvas(h_hadronic_w_mass, "Hadronic Decaying W Mass Before Cuts", "hadronicWMassDistribution.png")
+# createCanvas(h_hadronic_w_mass_aftercut200, "Hadronic Decaying W Mass After Cuts & TopPt>200", "hadronicWMassAfterCut200Distribution.png")
+# createCanvas(h_hadronic_w_mass_aftercut400, "Hadronic Decaying W Mass After Cuts & TopPt>400", "hadronicWMassAfterCut400Distribution.png")
+# createCanvas(h_topPt, "Top Quark pT Before Cuts", "topPtDistribution.png", True)
+# createCanvas(h_topPt_aftercut200, "Top Quark pT After Cuts & TopPt>200", "topPtAfterCut200Distribution.png", True)
+# createCanvas(h_topPt_aftercut400, "Top Quark pT After Cuts & TopPt>400", "topPtAfterCut400Distribution.png", True)
+# createCanvas(h_antitopPt, "Anti-Top Quark pT Before Cuts", "antitopPtDistribution.png", True)
+# createCanvas(h_antitopPt_aftercut200, "Anti-Top Quark pT After Cuts & TopPt>200", "antitopPtAfterCut200Distribution.png", True)
+# createCanvas(h_antitopPt_aftercut400, "Anti-Top Quark pT After Cuts & TopPt>400", "antitopPtAfterCut400Distribution.png", True)
+# createCanvas(h_bquark_pt_electron, "b-quark pT Electron Channel", "bquarkPtDistribution.png", True)
+# createCanvas(h_bquark_eta_electron, "b-quark Eta Electron Channel", "bquarkEtaDistribution.png")
+# createCanvas(h_bquark_pt_muon, "b-quark pT Muon Channel", "bquarkPtDistribution.png", True)
+# createCanvas(h_bquark_eta_muon, "b-quark Eta Muon Channel ", "bquarkEtaDistribution.png")
+
+# createCanvas(h_bquark_pt_aftercut200, "b-quark pT After Cuts & TopPt>200", "bquarkPtAfterCut200Distribution.png", True)
+# createCanvas(h_bquark_pt_aftercut400, "b-quark pT After Cuts & TopPt>400", "bquarkPtAfterCut400Distribution.png", True)
+# createCanvas(h_topMultiplicity, "Top Multiplicity Before Cuts", "topMultiplicityDistribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_topMultiplicity_aftercut200, "Top Multiplicity After Cuts & TopPt>200", "topMultiplicityAfterCut200Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_topMultiplicity_aftercut400, "Top Multiplicity After Cuts & TopPt>400", "topMultiplicityAfterCut400Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_antitopMultiplicity, "Anti-Top Multiplicity Before Cuts", "antitopMultiplicityDistribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_antitopMultiplicity_aftercut200, "Anti-Top Multiplicity After Cuts & Pt>200", "antitopMultiplicityAfterCut200Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_antitopMultiplicity_aftercut400, "Anti-Top Multiplicity After Cuts & Pt>400", "antitopMultiplicityAfterCut400Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_jetMultiplicity_fromW, "Jet Multiplicity from W Before Cuts", "jetMultiplicityFromWDistribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_jetMultiplicity_fromW_after200, "Jet Multiplicity from W After Cuts & Pt>200", "jetMultiplicityFromWAfterCut200Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_jetMultiplicity_fromW_after400, "Jet Multiplicity from W After Cuts & Pt>400", "jetMultiplicityFromWAfterCut400Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_MET, "MET Before Cuts", "METDistribution.png")
+# createCanvas(h_MET_after200, "MET After Cuts & Pt>200", "METAfterCut200Distribution.png")
+# createCanvas(h_MET_after400, "MET After Cuts & Pt>400", "METAfterCut400Distribution.png")
+# createCanvas(h_invariantMass, "Invariant Mass", "invariantMassDistribution.png", True)
+# createCanvas(h_invariantMass_aftercut200, "Invariant Mass After Cuts & Pt>200", "invariantMassAfterCut200Distribution.png", True)
+# createCanvas(h_invariantMass_aftercut400, "Invariant Mass After Cuts & Pt>400", "invariantMassAfterCut400Distribution.png", True)
+# createCanvas(h_jetMultiplicity, "Jet Multiplicity Without Cuts", "jetMultiplicityDistribution.png", True, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
+# createCanvas(h_nonTopMotherJets, "Jets without Top as Mother", "nonTopMotherJetsDistribution.png")
+# createCanvas(h_LHE_HT_before, "LHE_HT Before Cuts", "LHE_HTBeforeCutsDistribution.png", True)
+# createCanvas(h_muon_LHE_HT_aftercut200, "Muon Channel LHE_HT After Cuts & Pt>200", "muonLHE_HTAfterCut200Distribution.png", True)
+# createCanvas(h_muon_LHE_HT_aftercut400, "Muon Channel LHE_HT After Cuts & Pt>400", "muonLHE_HTAfterCut400Distribution.png", True)
+# createCanvas(h_ele_LHE_HT_aftercut200, "Electron Channel LHE_HT After Cuts & Pt>200", "eleLHE_HTAfterCut200Distribution.png", True)
+# createCanvas(h_ele_LHE_HT_aftercut400, "Electron Channel LHE_HT After Cuts & Pt>400", "eleLHE_HTAfterCut400Distribution.png", True)
+# createCanvas(h_ele_LHE_HT_before, "Electron Channel LHE_HT", "eleLHE_HTBeforeCutsDistribution.png", True)
+# createCanvas(h_ele_LHE_HT_after_lepton_cut, "Electron Channel LHE_HT After Electron Pt&Eta Cut", "eleLHE_HTAfterLeptonCutDistribution.png", True)
+# createCanvas(h_ele_LHE_HT_after_jet_cut, "Electron Channel LHE_HT After Electron and Jet Cuts", "eleLHE_HTAfterJetCutDistribution.png", True)
+# createCanvas(h_ele_LHE_HT_after_met_cut, "Electron Channel LHE_HT After Electron, Jet, and MET Cut", "eleLHE_HTAfterMETCutDistribution.png", True)
+# createCanvas(h_ele_LHE_HT_after_toppt200_cut, "Electron Channel LHE_HT After Cuts & Pt>200", "eleLHE_HTAfterTopPt200CutDistribution.png", True)
+# createCanvas(h_ele_LHE_HT_after_toppt400_cut, "Electron Channel LHE_HT After Cuts & Pt>400", "eleLHE_HTAfterTopPt400CutDistribution.png", True)
+# createCanvas(h_muon_LHE_HT_before, "Muon Channel LHE_HT", "muonLHE_HTBeforeCutsDistribution.png", True)
+# createCanvas(h_muon_LHE_HT_after_lepton_cut, "Muon Channel LHE_HT After Muon Pt&Eta Cut", "muonLHE_HTAfterLeptonCutDistribution.png", True)
+# createCanvas(h_muon_LHE_HT_after_jet_cut, "Muon Channel LHE_HT After Muon and Jet Cuts", "muonLHE_HTAfterJetCutDistribution.png", True)
+# createCanvas(h_muon_LHE_HT_after_met_cut, "Muon Channel LHE_HT After Muon, Jet, and MET Cut", "muonLHE_HTAfterMETCutDistribution.png", True)
+# createCanvas(h_muon_LHE_HT_after_toppt200_cut, "Muon Channel LHE_HT After Cuts & Pt>200", "muonLHE_HTAfterTopPt200CutDistribution.png", True)
+# createCanvas(h_muon_LHE_HT_after_toppt400_cut, "Muon Channel LHE_HT After Cuts & Pt>400", "muonLHE_HTAfterTopPt400CutDistribution.png", True)
+# createCanvas(h_both_decays, "Events with Both Leptonic and Hadronic Decays", "bothdecays.png", False )     
+# createCanvas(h_jetFromW_pt, "Jet pT from W Before Cuts; pT (GeV)", "jetfromW_pt.png")
+# createCanvas(h_jetFromW_eta,"Jet Eta from W Before Cuts", "jetfromW_eta.png")
+# createCanvas(h_jetFromW_pt_aftercut200, "Jet pT from W After Cuts & TopPt>200; pT (GeV)", "jetfromW_pt_after200.png")
+# createCanvas(h_jetFromW_pt_aftercut400, "Jet pT from W After Cuts & TopPt>400; pT (GeV)", "jetfromW_pt_after400.png") 
+       
 print("Total number of events:", totalEvents)

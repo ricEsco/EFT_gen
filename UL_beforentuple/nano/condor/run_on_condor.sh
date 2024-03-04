@@ -10,7 +10,9 @@ echo $CMSSW_BASE "is the CMSSW we created on the local worker node"
 cd ${_CONDOR_SCRATCH_DIR}
 pwd
 
-root_file_path="/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/UL_beforentuple/nano/120000/0520A050-AF68-EF43-AA5B-5AA77C74ED73.root"
+root_file_path="/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/UL_beforentuple/nano/120000/divided_files_1000/root_files/${1}"
 
-xrdcp -f /nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/UL_beforentuple/nano/UL_nano_fully_semileptonic_multiprocess.py .
-python UL_nano_fully_semileptonic_multiprocess.py "$root_file_path"
+# xrdcp -f root://cmseos.fnal.gov//store/user/beozek/EFT_gen/EFT_nanofiles_fully_semileptonic.py .
+xrdcp -f /nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/UL_beforentuple/nano/condor/EFT_nanofiles_fully_semileptonic_multiprocess_weights_nocut.py .
+python EFT_nanofiles_fully_semileptonic_multiprocess_weights_nocut.py "$root_file_path"
+# xrdcp -r condor_plots root://cmseos.fnal.gov//store/user/beozek/EFT_gen/
