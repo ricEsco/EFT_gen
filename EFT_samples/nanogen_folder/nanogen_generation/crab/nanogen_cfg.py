@@ -2,13 +2,13 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: Configuration/GenProduction/python/pythia_fragment.py --python_filename nanogen_cfg.py --eventcontent NANOAODGEN --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAOD --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed=123 --fileout file:nanogen_123.root --conditions 106X_mcRun2_asymptotic_v13 --beamspot Realistic25ns13TeV2016Collision --step LHE,GEN,NANOGEN --geometry DB:Extended --era Run2_2016 --no_exec --mc -n 1000000
+# with command line options: Configuration/GenProduction/python/pythia_fragment.py --python_filename nanogen_cfg.py --eventcontent NANOAODGEN --customise Configuration/DataProcessing/Utils.addMonitoring --datatier NANOAOD --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed=123 --fileout file:nanogen_123.root --conditions 10000006X_mcRun2_asymptotic_v13 --beamspot Realistic25ns13TeV2016Collision --step LHE,GEN,NANOGEN --geometry DB:Extended --era Run2_2016 --no_exec --mc -n 1000000
 import os
 import FWCore.ParameterSet.VarParsing as VarParsing
 
 options = VarParsing.VarParsing ('standard')
-options.register('gridpack',  '/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/EFT_samples/scripts_plots_new_samples/input_files/CA/TT01j1lCA_HT500_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz',  VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string,  "Which Gridpack?")
-options.register('outputDir', 'srm://dcache-se-cms.desy.de:8443/pnfs/desy.de/cms/tier2/store/user/beozek/EFT_nanogen/', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string,  "Where to store the output root file?")
+options.register('gridpack',  '/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/scripts_plots_new_samples/input_files/CA/TT01j1lCA_HT500_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz',  VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string,  "Which Gridpack?")
+options.register('outputDir', 'srm://dcache-se-cms.desy.de:8443/pnfs/desy.de/cms/tier2/store/user/beozek/', VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.string,  "Where to store the output root file?")
 options.maxEvents=1000000  # maxEvents is a registered option. 
 
 if not 'ipython' in VarParsing.sys.argv[0]: options.parseArguments()
@@ -58,7 +58,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('Configuration/GenProduction/python/pythia_fragment.py nevts:1000000'),
+    annotation = cms.untracked.string('Configuration/GenProduction/python/pythia_fragment.py nevts:10'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -150,7 +150,7 @@ process.generator = cms.EDFilter("Pythia8HadronizerFilter",
 
 
 process.externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
-    # args = cms.vstring('/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/EFT_samples/scripts_plots_new_samples/input_files/CA/TT01j1lCA_HT500_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz'),
+    # args = cms.vstring('/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/scripts_plots_new_samples/input_files/CA/TT01j1lCA_HT500_slc7_amd64_gcc700_CMSSW_10_6_19_tarball.tar.xz'),
     args = cms.vstring(options.gridpack),
     nEvents = cms.untracked.uint32(1000000),
     numberOfParameters = cms.uint32(1),

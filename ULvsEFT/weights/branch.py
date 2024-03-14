@@ -1,6 +1,7 @@
 import ROOT
+ROOT.gROOT.SetBatch(True)
 
-f = ROOT.TFile("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/nanogen_folder/nano_files/1j1l_NoHT_old/nanogen_123_2.root", "READ")
+f = ROOT.TFile("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/nanogen_folder/nano_files/1j1l_NoHT/nanogen_123_1.root", "READ")
 
 tree = f.Get("Events")
 
@@ -27,17 +28,18 @@ for short_name, long_name in branches.items():
     
     hist_title = "Branch Values of  " + short_name
     hist_name = short_name
-    hist = ROOT.TH1F(hist_name, hist_title, 200, 0, 2) 
+    hist = ROOT.TH1F(hist_name, hist_title, 16, 0.85, 1.65) 
 
     for entry in tree:
         value = getattr(entry, long_name)
         hist.Fill(value)
+    
 
     hist.Draw()
 
     canvas.Update()
 
-    canvas.SaveAs(short_name + ".png")
+    canvas.SaveAs(short_name + "_v2.png")
 
     hist.Reset()
 

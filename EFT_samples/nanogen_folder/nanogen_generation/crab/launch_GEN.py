@@ -5,7 +5,7 @@ import imp, os, sys
 from optparse import OptionParser
 import re
 
-cfgPath    = os.path.expandvars( "/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_27/src/EFT_gen_old/EFT_samples/nanogen_folder/nanogen_generation/NoHT/" )
+cfgPath    = os.path.expandvars( "/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/nanogen_folder/nanogen_generation/NoHT/" )
 allConfigs = [ x.split(".")[0] for x in os.listdir( cfgPath ) if x.endswith(".py") ]
 
 parser = OptionParser(usage="python launch.py [options] component1 [ component2 ...]", \
