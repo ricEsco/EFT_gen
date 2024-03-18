@@ -2,7 +2,7 @@ import ROOT
 
 ROOT.gROOT.SetBatch(True)
 
-file1 = ROOT.TFile.Open("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/output_weights_NoNu_latest/output_EFT_v4.root", "READ")
+file1 = ROOT.TFile.Open("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/output_weights_NoNu_latest/output_EFT_latest.root", "READ")
 file2 = ROOT.TFile.Open("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/UL_beforentuple/nano/condor/plots/output_latest.root", "READ")
 
 histograms_to_overlay = [
@@ -88,7 +88,7 @@ for hist_names in histograms_to_overlay:
     # hist3.SetLineWidth(3)
 
     c = ROOT.TCanvas("c", "canvas", 800, 600)
-    # c.SetLogy(1) 
+    c.SetLogy(1) 
     ROOT.gStyle.SetOptStat("io")
     
     hist1.Draw("hist")  
@@ -112,7 +112,7 @@ for hist_names in histograms_to_overlay:
     legend.AddEntry(hist8, "Madgraph EFT, Scale Index 7 ")
     legend.Draw()
 
-    c.SaveAs("{}_v3.png".format(hist_names[0]))
+    c.SaveAs("{}.png".format(hist_names[0]))
   
 
 

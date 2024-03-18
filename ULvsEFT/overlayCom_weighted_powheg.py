@@ -56,22 +56,20 @@ for hist_names in histograms_to_overlay:
     histDown = file3.Get(hist_names[3] + "_Down")
     
     
-    if hist1.Integral() > 0:
-        hist1.Scale(1.0 / hist1.Integral())
-    if hist2.Integral() > 0:
-        hist2.Scale(1.0 / hist2.Integral())
+    # if hist1.Integral() > 0:
+    #     hist1.Scale(1.0 / hist1.Integral())
+    # if hist2.Integral() > 0:
+    #     hist2.Scale(1.0 / hist2.Integral())
 
     hist1.SetLineColor(ROOT.kRed)
     hist2.SetLineColor(ROOT.kGreen-2)
     
     # hist1.SetLineWidth(3)
-    # hist2.SetLineWidth(3)
-
+    # hist2.SetLineWidth(3)    
+    
     c = ROOT.TCanvas("c", "canvas", 800, 600)
     c.SetLogy(1) 
     ROOT.gStyle.SetOptStat("iorme")
-    
-    c = ROOT.TCanvas("c", "canvas", 800, 600)
     pad1 = ROOT.TPad("pad1", "The upper pad", 0, 0.3, 1, 1.0)
     pad2 = ROOT.TPad("pad2", "The lower pad", 0, 0.05, 1, 0.3)
     pad1.Draw()
@@ -155,7 +153,7 @@ for hist_names in histograms_to_overlay:
     else:
         print("Systematic band is empty or not visible.")
 
-    c.SaveAs("output_madgraphVSpowheg.pdf")
+    c.SaveAs("output_madgraphVSpowheg_weighted.pdf")
     
     
     

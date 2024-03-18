@@ -85,14 +85,14 @@ for hist_names in histograms_to_overlay:
     # hist3.SetLineWidth(3)    
     
     hist1.Draw("hist")  
-    hist2.Draw("histsame")  
-    hist3.Draw("histsame")  
+    # hist2.Draw("histsame")  
+    # hist3.Draw("histsame")  
     hist4.Draw("histsame")
 
-    legend = ROOT.TLegend(0.1, 0.7, 0.3, 0.9)
+    legend = ROOT.TLegend(0.5, 0.8, 0.9, 0.9)
     legend.AddEntry(hist1, "Powheg UL18")
-    legend.AddEntry(hist2, "Madgraph EFT, Nominal (SM weight only)")
-    legend.AddEntry(hist3, "Madgraph EFT, Qscale Up Variation")
+    # legend.AddEntry(hist2, "Madgraph EFT, Nominal (SM weight only)")
+    # legend.AddEntry(hist3, "Madgraph EFT, Qscale Up Variation")
     legend.AddEntry(hist4, "Madgraph EFT, Qscale Down Variation")
     legend.Draw()
     
@@ -100,54 +100,50 @@ for hist_names in histograms_to_overlay:
     pad2.cd()
     ROOT.gStyle.SetOptStat("0")
     
-    ratio = hist2.Clone("ratio")
-    ratio.Divide(hist1)
-    ratio.SetLineColor(ROOT.kBlack)
-    ratio.SetMinimum(0.0) 
-    ratio.SetMaximum(1.2)
-    ratio.GetYaxis().SetTitle("Madgraph SM / Powheg") 
-    ratio.GetYaxis().SetTitleSize(0.1) 
-    ratio.GetYaxis().SetTitleOffset(0.5)
-    ratio.GetYaxis().SetLabelSize(0.05) 
-    ratio.GetYaxis().CenterTitle(True)
-    ratio.SetTitle("")
     
-    ratio.GetXaxis().SetTitleSize(0.12)  
-    ratio.GetXaxis().SetTitleOffset(1.0) 
-    ratio.GetXaxis().SetLabelSize(0.1) 
+    # ratio = hist4.Clone("ratio")
+    # ratio.Divide(hist1)
+    # ratio.SetLineColor(ROOT.kBlack)
+    # ratio.SetMinimum(0.0) 
+    # ratio.SetMaximum(2.0)
+    # ratio.GetYaxis().SetTitle("Madgraph SM / Powheg") 
+    # ratio.GetYaxis().SetTitleSize(0.1) 
+    # ratio.GetYaxis().SetTitleOffset(0.5)
+    # ratio.GetYaxis().SetLabelSize(0.08) 
+    # ratio.GetYaxis().CenterTitle(True)
+    # ratio.SetTitle("")
+    
+    # ratio.GetXaxis().SetTitleSize(0.12)  
+    # ratio.GetXaxis().SetTitleOffset(1.0) 
+    # ratio.GetXaxis().SetLabelSize(0.1) 
 
-    ratio.Draw("ep")
+    # ratio.Draw("ep")
     
-    line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1, ratio.GetXaxis().GetXmax(), 1)
-    line.SetLineColor(ROOT.kBlack)
-    line.SetLineStyle(2)
-    line.Draw("same")
+    # line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1, ratio.GetXaxis().GetXmax(), 1)
+    # line.SetLineColor(ROOT.kBlack)
+    # line.SetLineStyle(2)
+    # line.Draw("same")
     
-    n_bins = ratio.GetNbinsX()
-    errors_x = ROOT.Double(0)
-    errors_y = ROOT.Double(0)
-    graph = ROOT.TGraphAsymmErrors(n_bins)
-    for i in range(1, n_bins+1):
-        x = hist2.GetBinCenter(i)
-        y = ratio.GetBinContent(i)
-        if hist2.GetBinContent(i) >0:
-            up = 1-(hist2.GetBinContent(i))/hist3.GetBinContent(i)
-            down = 1-(hist2.GetBinContent(i)/ hist4.GetBinContent(i))
-        graph.SetPoint(i-1, x, y)
-        graph.SetPointError(i-1, 0, 0, down, up)
-        print("up: ", up)
-        print("down: ", down)
-        # print("hist3.GetBinContent(i): ", hist3.GetBinContent(i))
-        # print("hist2.GetBinContent(i): ", hist2.GetBinContent(i))
+    systematic_uncertainty = hist2.Clone("systematic_uncertainty")
+    systematic_uncertainty.Reset()
+    
+    for i in range(1, hist2.GetNbinsX() + 1):
+        nominal_value = hist2.GetBinContent(i)
+        variation_value = hist4.GetBinContent(i)
+        bin_uncertainty = abs(nominal_value - variation_value)
+        systematic_uncertainty.SetBinError(i, bin_uncertainty)
 
-    graph.SetFillColor(ROOT.kBlue)
-    graph.SetFillStyle(3005)
-    graph.Draw("2 SAME") 
+    systematic_uncertainty.SetFillColor(ROOT.kGray+2)
+    systematic_uncertainty.SetFillStyle(3245)
+    systematic_uncertainty.SetLineColor(ROOT.kGray+2)
+    systematic_uncertainty.GetYaxis().SetLabelSize(0.08) 
+    systematic_uncertainty.Draw("E2 SAME")
+
 
     c.Update()
     
 
-    c.SaveAs("{}_errband.png".format(hist_names[0]))
+    c.SaveAs("{}_down_sys.png".format(hist_names[0]))
   
 
 

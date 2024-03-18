@@ -1,6 +1,6 @@
 import ROOT
 
-file = ROOT.TFile("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/output_weights_NoNu_latest/output_EFT.root", "READ")
+file = ROOT.TFile("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/output_weights_NoNu_latest/output_EFT_latest_v2.root", "READ")
 
 histograms = [
     'h_leptonPt_scale', 'h_leptonEta_scale',
