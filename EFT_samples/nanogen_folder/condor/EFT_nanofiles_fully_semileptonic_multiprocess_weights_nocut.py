@@ -597,6 +597,9 @@ def process_event(entry, histograms, relevant_pdgIds):
                                 
                                 elif abs(lepton_pdg) == 13:
                                     muon_found = True
+                                
+                                histograms['h_leptonPt'].Fill(lepton_pt)
+                                histograms["h_leptonPt_scale_0"].Fill(lepton_pt, 3)
                                     
                                     
                             else: 
@@ -672,10 +675,15 @@ def process_event(entry, histograms, relevant_pdgIds):
     # matches = one_to_one_matching(entry, b_quarks, w_quarks1, w_quarks2)
 
     scale_indices = [0,1,3,4,6,7]
-    
+    # print("lheScaleWeights :", lheScaleWeights[0])
     for scale_index, scale_weight in enumerate(lheScaleWeights):
         if scale_index in scale_indices:
-            scale_adjusted_weight = weight_0 * scale_weight
+            # scale_adjusted_weight = weight_0 * scale_weight
+            scale_adjusted_weight = scale_weight
+            
+            # print("scale_index: ", scale_index, "scale_weight: ", scale_weight)
+            # print ("scale_weight: ", scale_weight)
+            # print("scale_adjusted_weight: ", scale_adjusted_weight)
         
             
             if len(w_quarks_indices) == 2 and len(b_quarks) == 2:
@@ -872,7 +880,7 @@ def process_event(entry, histograms, relevant_pdgIds):
                     
         
                     
-                    histograms['h_leptonPt'].Fill(lepton_pt)
+                    # histograms['h_leptonPt'].Fill(lepton_pt)
                     histograms['h_leptoneta'].Fill(lepton_eta)
                     histograms['h_leptonphi'].Fill(lepton_phi)
                     histograms['h_leptonFlavor'].Fill(entry.GenPart_pdgId[k])
@@ -888,17 +896,23 @@ def process_event(entry, histograms, relevant_pdgIds):
                     histograms['h_leptonFlavor_ctGRe'].Fill(entry.GenPart_pdgId[k], weight_1)
                     
                     
-                    histogram_key_leptonPt = 'h_leptonPt_scale_{}'.format(scale_index)
-                    histograms[histogram_key_leptonPt].Fill(lepton_pt, scale_adjusted_weight)
+                    # histogram_key_leptonPt = 'h_leptonPt_scale_{}'.format(scale_index)
+                    # histograms[histogram_key_leptonPt].Fill(lepton_pt, 10)    
+                    
+                    # if scale_index == 0:
+                    #     histograms['h_leptonEta_scale_0'].Fill(lepton_eta, 10)
+                    # if scale_index == 1:
+                    #     histograms['h_leptonEta_scale_1'].Fill(lepton_eta, 10)
+                    # if scale_index == 3:
+                    #     histograms['h_leptonEta_scale_3'].Fill(lepton_eta, 10)
         
-                    histogram_key_leptonEta = 'h_leptonEta_scale_{}'.format(scale_index)
-                    histograms[histogram_key_leptonEta].Fill(lepton_eta, scale_adjusted_weight)
+                    # histogram_key_leptonEta = 'h_leptonEta_scale_{}'.format(scale_index)
+                    # histograms[histogram_key_leptonEta].Fill(lepton_eta, scale_adjusted_weight)
                     
-                    
+                    # print("scale_index: ", scale_index, "scale_adjusted_weight: ", scale_adjusted_weight)
                     # print("lepton_pt: ", lepton_pt ,"|| scaled by EFT: ", weight_1, "|| EVAL SM: ", histograms["h_leptoneta_weightSM"].Eval(lepton_pt), " || EVAL EFT: ", histograms["h_leptoneta_ctGRe"].Eval(lepton_pt))
 
 
-                    
                     if abs(lepton_pdgId) == 11:
                         
                     
@@ -916,6 +930,7 @@ def process_event(entry, histograms, relevant_pdgIds):
         
                         histogram_key_electronEta = 'h_electronEta_scale_{}'.format(scale_index)
                         histograms[histogram_key_electronEta].Fill(lepton_eta, scale_adjusted_weight)
+                        
                                             
                     elif abs(lepton_pdgId) == 13:
                         
@@ -1092,15 +1107,13 @@ def process_event(entry, histograms, relevant_pdgIds):
                         histograms['h_second_leading_jet_pt_ctGRe'].Fill(second_leading_jet[0].Pt(), weight_1) 
                         
                         histogram_key_second_leading_jet_pt = 'h_second_leading_jet_pt_scale_{}'.format(scale_index)
-                        histograms[histogram_key_second_leading_jet_pt].Fill(second_leading_jet[0].Pt(), scale_adjusted_weight)
+                        histograms[histogram_key_second_leading_jet_pt].Fill(second_leading_jet[0].Pt()), scale_adjusted_weight
                         
        
     return leptons, tops, hadronic_top_pt, b_quarks, last_copy_partons, b_quarks, w_quarks1, w_quarks2
 
-
 # This function identifies jets that are closely matched with last copy partons. 
 # It appends a tuple to matched_jets which includes the jet and its index in the GenJet collection.
-
 def one_to_one_matching(entry, b_quarks, w_quarks1, w_quarks2):
 
     jets = []
@@ -1463,9 +1476,6 @@ def analyze(filename):
     for ientry, entry in enumerate(tree):
         # print("EVENT: ", ientry)
         process_event(entry, histograms, relevant_pdgIds)
-        
-    
-    
 
     
     file.Close()
