@@ -467,14 +467,14 @@ def process_event(entry, histograms, relevant_pdgIds):
     # print("ctGRe weight: ", weight_1)
     
     lheScaleWeights = getattr(entry,"LHEScaleWeight")
-    scale_weight_0 = lheScaleWeights[0] * weight_0
-    scale_weight_1 = lheScaleWeights[1] * weight_0
-    scale_weight_3 = lheScaleWeights[3] * weight_0
-    scale_weight_4 = lheScaleWeights[4] * weight_0
-    scale_weight_6 = lheScaleWeights[6] * weight_0
-    scale_weight_7 = lheScaleWeights[7] * weight_0
+    scale_weight_0 = lheScaleWeights[0] * weight_1
+    scale_weight_1 = lheScaleWeights[1] * weight_1
+    scale_weight_3 = lheScaleWeights[3] * weight_1
+    scale_weight_4 = lheScaleWeights[4] * weight_1
+    scale_weight_6 = lheScaleWeights[6] * weight_1
+    scale_weight_7 = lheScaleWeights[7] * weight_1
 
-    # processing particles
+    # processing particless
     for i in range(entry.nGenPart):
         pdgId = entry.GenPart_pdgId[i]
         pt = entry.GenPart_pt[i]
