@@ -1,6 +1,6 @@
 import ROOT
 
-file = ROOT.TFile("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/output_weights_NoNu_latest/output_EFT_latest_v2.root", "READ")
+file = ROOT.TFile("/nfs/dust/cms/user/beozek/EFT/CMSSW_10_6_26/src/EFT_gen_old/EFT_samples/nanogen_folder/condor/output_weights_NoNu_latest/output_EFT_ctGreweighted.root", "READ")
 
 histograms = [
     'h_leptonPt_scale', 'h_leptonEta_scale',
@@ -15,7 +15,7 @@ histograms = [
     
 variations = [0,1,3,4,6,7]  #number of scale weights
 
-output_file = ROOT.TFile("envelope_output.root", "RECREATE")
+output_file = ROOT.TFile("envelope_output_ctGRe.root", "RECREATE")
 
 for histname in histograms:
     min_hist = None
