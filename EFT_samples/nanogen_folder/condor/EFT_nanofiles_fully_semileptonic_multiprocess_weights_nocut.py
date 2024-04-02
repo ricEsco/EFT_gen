@@ -1,17 +1,13 @@
 # -*- coding: utf-8 -*-
 import ROOT
 import os
-import glob
 from array import array
-import subprocess
-import argparse
 import sys
 from DataFormats.FWLite import Events, Handle
 import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.Config as edm
 from XRootD import client
 from XRootD.client.flags import DirListFlags, StatInfoFlags, OpenFlags, QueryCode
-import multiprocessing
 
 # Enable ROOT's batch mode to prevent graphics from opening for every plot
 ROOT.gROOT.SetBatch(True)
@@ -21,13 +17,15 @@ output_dir = "/nfs/dust/cms/user/ricardo/EFT/CMSSW_10_6_26/src/EFT_gen/EFT_sampl
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
-## Defining Histograms -*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+## Initializing Histograms -*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+# ROOT histogram constructor syntax: ROOT.TH1F("name", "title; x-axis title; y-axis title", n_bins, x_min, x_max)
 
+# bin edges for leptonFlavor histogram
+bin_edges = [-16.5, -14.5, -12.5, -10.5, 10.5, 12.5, 14.5, 16.5]
 # nominal
 h_leptonPt = ROOT.TH1F("h_leptonPt", "Lepton pT ; pT (GeV);Events", 25, 0, 500)
 h_leptoneta = ROOT.TH1F("h_leptoneta", "Lepton Eta ; #eta;Events", 100, -5, 5)
 h_leptonphi = ROOT.TH1F("h_leptonphi", "Azimuthal Angle ; #phi;Events", 100, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
-bin_edges = [-16.5, -14.5, -12.5, -10.5, 10.5, 12.5, 14.5, 16.5]
 h_leptonFlavor = ROOT.TH1F("h_leptonFlavor", "Lepton Flavor; PDG ID;Events", len(bin_edges)-1, array('d', bin_edges))
 h_leptonFlavor.GetXaxis().SetBinLabel(1, "muon-")
 h_leptonFlavor.GetXaxis().SetBinLabel(2, "electron-")
@@ -44,11 +42,16 @@ h_antitopPt = ROOT.TH1F("h_antitopPt", "Anti-Top Quark p_{T} ; p_{T} [GeV];Event
 h_antitopEta = ROOT.TH1F("h_antitopEta", "Anti-Top Quark #eta ;#eta;Events", 100, -5, 5)
 h_bquark_pt = ROOT.TH1F("h_bquark_pt", "b-quark pT ;pT (GeV);Events", 50, 0, 1000)
 h_bquark_eta = ROOT.TH1F("h_bquark_eta", "b-quark #eta  ;#eta;Events", 100, -5, 5)
+h_had_b_4vec_pt = ROOT.TH1F("h_had_b_4vec_pt", "Hadronic b-quark pT ;pT (GeV);Events", 50, 0, 1000)
+h_had_b_4vec_eta = ROOT.TH1F("h_had_b_4vec_eta", "Hadronic b-quark #eta  ;#eta;Events", 100, -5, 5)
+h_had_b_4vec_phi = ROOT.TH1F("h_had_b_4vec_phi", "Hadronic b-quark #phi  ;#phi;Events", 100, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_had_b_4vec_mass = ROOT.TH1F("h_had_b_4vec_mass", "Hadronic b-quark Mass  ;Mass;Events", 50, 0, 10)
 h_topMultiplicity = ROOT.TH1F("h_topMultiplicity", "Top Multiplicity ; N_{top};Events", 5, 0, 5)
 h_antitopMultiplicity = ROOT.TH1F("h_antitopMultiplicity", "Anti-Top Multiplicity ; N_{antitop};Events", 5, 0, 5)
 h_jetMultiplicity_fromW = ROOT.TH1F("h_jetMultiplicity_fromW", "Jet Multiplicity from W ; Number of Jets; Events", 10, 0, 5)
 h_invariantMass = ROOT.TH1F("h_invariantMass", "Invariant Mass; M (GeV);Events", 250, 0, 5000)
 h_jetMultiplicity = ROOT.TH1F("h_jetMultiplicity Without Cuts", "Number of Jets per Event", 10, 0, 50)
+h_jet_multiplicity_last_copy = ROOT.TH1F('h_jet_multiplicity_last_copy', 'Jet Multiplicity Last Copy;Number of Jets;Events', 10, 0, 10)
 h_nonTopMotherJets = ROOT.TH1F("h_nonTopMotherJets", "Jets without Top as Mother; Count;Events", 10, 0, 50)
 h_LHE_HT = ROOT.TH1F("h_LHE_HT", "LHE_HT ; HT (GeV); Events", 150, 0, 3000)
 h_LHE_HT_0_500 = ROOT.TH1F("h_LHE_HT_0_500", "LHE_HT Mtt = [0,500] ; HT (GeV); Events", 150, 0, 3000)
@@ -61,41 +64,7 @@ h_jetFromW_pt = ROOT.TH1F("h_jetFromW_pt", "Jet pT from W ; pT (GeV);Events", 10
 h_jetFromW_eta = ROOT.TH1F("h_jetFromW_eta", "Jet Eta from W ; #eta;Events", 100, -5, 5)
 h_leading_jet_pt = ROOT.TH1F("h_leading_jet_pt", "Leading Jet pT; pT (GeV);Events", 100, 0, 1000)
 h_second_leading_jet_pt = ROOT.TH1F("h_second_leading_jet_pt", "Second Leading Jet pT; pT (GeV);Events", 100, 0, 1000)
-h_jet_multiplicity_last_copy = ROOT.TH1F('h_jet_multiplicity_last_copy', 'Jet Multiplicity Last Copy;Number of Jets;Events', 10, 0, 10)
 h_mtt_vs_LHEHT = ROOT.TH2F("h_mtt_vs_LHEHT", "Invariant Mass of ttbar vs. LHE HT;LHE HT (GeV);m_{tt} (GeV)", 50, 0, 1000, 50, 300, 5000)
-#-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
-
-# Up/Down Scale variations
-h_leptonPt_Down = ROOT.TH1F("h_leptonPt_Down", "Lepton pT Down Scale ; pT (GeV);Events", 25, 0, 500)
-h_leptonPt_Up = ROOT.TH1F("h_leptonPt_Up", "Lepton pT Up Scale ; pT (GeV);Events", 25, 0, 500)
-h_leptonEta_Down = ROOT.TH1F("h_leptonEta_Down", "Lepton Eta Down Scale ; #eta;Events", 100, -5, 5)
-h_leptonEta_Up = ROOT.TH1F("h_leptonEta_Up", "Lepton Eta Up Scale ; #eta;Events", 100, -5, 5)
-h_electronPt_Down = ROOT.TH1F("h_electronPt_Down", "Electron pT Down Scale; pT (GeV);Events", 25, 0, 500)
-h_electronPt_Up = ROOT.TH1F("h_electronPt_Up", "Electron pT Up Scale; pT (GeV);Events", 25, 0, 500)
-h_electronEta_Down = ROOT.TH1F("h_electronEta_Down", "Electron #eta Down Scale; #eta;Events", 100, -5, 5)
-h_electronEta_Up = ROOT.TH1F("h_electronEta_Up", "Electron #eta Up Scale; #eta;Events", 100, -5, 5)
-h_muonPt_Down = ROOT.TH1F("h_muonPt_Down", "Muon pT Down Scale; pT (GeV);Events", 25, 0, 500)
-h_muonPt_Up = ROOT.TH1F("h_muonPt_Up", "Muon pT Up Scale; pT (GeV);Events", 25, 0, 500)
-h_muonEta_Down = ROOT.TH1F("h_muonEta_Down", " Muon #eta Down Scale ; #eta;Events", 100, -5, 5)
-h_muonEta_Up = ROOT.TH1F("h_muonEta_Up", " Muon #eta Up Scale ; #eta;Events", 100, -5, 5)
-h_topPt_Down = ROOT.TH1F("h_topPt_Down", "Top Quark pT Down Scale; pT (GeV);Events", 100, 0, 2000)
-h_topPt_Up = ROOT.TH1F("h_topPt_Up", "Top Quark pT Up Scale; pT (GeV);Events", 100, 0, 2000)
-h_topEta_Down = ROOT.TH1F("h_topEta_Down", "Top Quark #eta Down Scale ;#eta;Events", 100, -5, 5)
-h_topEta_Up = ROOT.TH1F("h_topEta_Up", "Top Quark #eta Up Scale ;#eta;Events", 100, -5, 5)
-h_antitopPt_Down = ROOT.TH1F("h_antitopPt_Down", "Anti-Top Quark p_{T} Down Scale ; p_{T} [GeV];Events", 100, 0, 2000)
-h_antitopPt_Up = ROOT.TH1F("h_antitopPt_Up", "Anti-Top Quark p_{T} Up Scale ; p_{T} [GeV];Events", 100, 0, 2000)
-h_antitopEta_Down = ROOT.TH1F("h_antitopEta_Down", "Anti-Top Quark #eta Down Scale ;#eta;Events", 100, -5, 5)
-h_antitopEta_Up = ROOT.TH1F("h_antitopEta_Up", "Anti-Top Quark #eta Up Scale ;#eta;Events", 100, -5, 5)
-h_invariantMass_Down = ROOT.TH1F("h_invariantMass_Down", "Invariant Mass Down Scale; M (GeV);Events", 250, 0, 5000)
-h_invariantMass_Up = ROOT.TH1F("h_invariantMass_Up", "Invariant Mass Up Scale; M (GeV);Events", 250, 0, 5000)
-h_leading_jet_pt_Down = ROOT.TH1F("h_leading_jet_pt_Down", "Leading Jet pT Down Scale; pT (GeV);Events", 100, 0, 1000)
-h_leading_jet_pt_Up = ROOT.TH1F("h_leading_jet_pt_Up", "Leading Jet pT Up Scale; pT (GeV);Events", 100, 0, 1000)
-h_second_leading_jet_pt_Down = ROOT.TH1F("h_second_leading_jet_pt_Down", "Second Leading Jet pT Down Scale; pT (GeV);Events", 100, 0, 1000)
-h_second_leading_jet_pt_Up = ROOT.TH1F("h_second_leading_jet_pt_Up", "Second Leading Jet pT Up Scale; pT (GeV);Events", 100, 0, 1000)
-h_jet_multiplicity_last_copy_Down = ROOT.TH1F('h_jet_multiplicity_last_copy_Down', 'Jet Multiplicity Last Copy Down Scale;Number of Jets;Events', 10, 0, 10)
-h_jet_multiplicity_last_copy_Up= ROOT.TH1F('h_jet_multiplicity_last_copy_Up', 'Jet Multiplicity Last Copy Up Scale;Number of Jets;Events', 10, 0, 10)
-h_jet_multiplicity_ishardprocess_Down = ROOT.TH1F('h_jet_multiplicity_ishardprocess_Down', 'Jet Multiplicity isHardProcess Down Scale ;Number of Jets;Events', 10, 0, 10)
-h_jet_multiplicity_ishardprocess_Up = ROOT.TH1F('h_jet_multiplicity_ishardprocess_Up', 'Jet Multiplicity isHardProcess Down Scale ;Number of Jets;Events', 10, 0, 10)
 #-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
 
 # (ren scfact 0.5, fac scfact 0.5) variations
@@ -162,7 +131,7 @@ h_leading_jet_pt_scale_4 = ROOT.TH1F("h_leading_jet_pt_scale_4", "Leading Jet pT
 h_second_leading_jet_pt_scale_4 = ROOT.TH1F("h_second_leading_jet_pt_scale_4", "Second Leading Jet pT MUF=2.0 MUR=1.0; pT (GeV);Events", 100, 0, 1000)
 h_jet_multiplicity_last_copy_scale_4 = ROOT.TH1F('h_jet_multiplicity_last_copy_scale_4', 'Jet Multiplicity Last Copy MUF=2.0 MUR=1.0;Number of Jets;Events', 10, 0, 10)
 h_jet_multiplicity_ishardprocess_scale_4 = ROOT.TH1F('h_jet_multiplicity_ishardprocess_scale_4', 'Jet Multiplicity isHardProcess MUF=2.0 MUR=1.0 ;Number of Jets;Events', 10, 0, 10)
-# (ren scfact 2.0, fac scfact 0.5) variations
+# (ren scfact 2.0, fac scfact 1.0) variations
 h_leptonPt_scale_6 = ROOT.TH1F("h_leptonPt_scale_6", "Lepton pT MUF=1.0 MUR=2.0 ; pT (GeV);Events", 25, 0, 500)
 h_leptonEta_scale_6 = ROOT.TH1F("h_leptonEta_scale_6", "Lepton Eta MUF=1.0 MUR=2.0 ; #eta;Events", 100, -5, 5)
 h_electronPt_scale_6 = ROOT.TH1F("h_electronPt_scale_6", "Electron pT MUF=1.0 MUR=2.0; pT (GeV);Events", 25, 0, 500)
@@ -200,7 +169,6 @@ h_jet_multiplicity_ishardprocess_scale_7 = ROOT.TH1F('h_jet_multiplicity_ishardp
 h_leptonPt_weightSM = ROOT.TH1F("h_leptonPt_weightSM", "Lepton pT ; pT (GeV);Events", 25, 0, 500)
 h_leptoneta_weightSM = ROOT.TH1F("h_leptoneta_weightSM", "Lepton Eta ; #eta;Events", 100, -5, 5)
 h_leptonphi_weightSM = ROOT.TH1F("h_leptonphi_weightSM", "Azimuthal Angle ; #phi;Events", 100, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
-bin_edges = [-16.5, -14.5, -12.5, -10.5, 10.5, 12.5, 14.5, 16.5]
 h_leptonFlavor_weightSM = ROOT.TH1F("h_leptonFlavor_weightSM", "Lepton Flavor; PDG ID;Events", len(bin_edges)-1, array('d', bin_edges))
 h_leptonFlavor_weightSM.GetXaxis().SetBinLabel(1, "muon-")
 h_leptonFlavor_weightSM.GetXaxis().SetBinLabel(2, "electron-")
@@ -244,7 +212,6 @@ h_mtt_vs_LHEHT_weightSM  = ROOT.TH2F("h_mtt_vs_LHEHT_weightSM", "Invariant Mass 
 h_leptonPt_ctGRe = ROOT.TH1F("h_leptonPt_ctGRe", "Lepton pT ; pT (GeV);Events", 25, 0, 500)
 h_leptoneta_ctGRe = ROOT.TH1F("h_leptoneta_ctGRe", "Lepton Eta ; #eta;Events", 100, -5, 5)
 h_leptonphi_ctGRe = ROOT.TH1F("h_leptonphi_ctGRe", "Azimuthal Angle ; #phi;Events", 100, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
-bin_edges = [-16.5, -14.5, -12.5, -10.5, 10.5, 12.5, 14.5, 16.5]
 h_leptonFlavor_ctGRe = ROOT.TH1F("h_leptonFlavor_ctGRe", "Lepton Flavor; PDG ID;Events", len(bin_edges)-1, array('d', bin_edges))
 h_leptonFlavor_ctGRe.GetXaxis().SetBinLabel(1, "muon-")
 h_leptonFlavor_ctGRe.GetXaxis().SetBinLabel(2, "electron-")
@@ -286,6 +253,13 @@ h_pdgId_last_copy = ROOT.TH1F('h_pdgId_last_copy', 'PDG ID Last Copy',  51, -25.
 h_pdgId_first_copy = ROOT.TH1F('h_pdgId_first_copy', 'PDG ID First Copy', 51, -25.5, 25.5)
 h_pdgId_ishardprocess = ROOT.TH1F('h_pdgId_ishardprocess', 'PDG ID isHardProcess', 51, -25.5, 25.5)
 h_pdgId_fromhardprocess = ROOT.TH1F('h_pdgId_fromhardprocess', 'PDG ID fromHardProcess', 51, -25.5, 25.5)
+#-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
+
+# LHE weight ctu1
+h_had_b_4vec_pt_weight_ctu1  = ROOT.TH1F("h_had_b_4vec_pt_weight_ctu1", "Hadronic b-quark pT ;pT (GeV);Events", 50, 0, 1000)
+h_had_b_4vec_eta_weight_ctu1 = ROOT.TH1F("h_had_b_4vec_eta_weight_ctu1", "Hadronic b-quark #eta  ;#eta;Events", 100, -5, 5)
+h_had_b_4vec_phi_weight_ctu1 = ROOT.TH1F("h_had_b_4vec_phi_weight_ctu1", "Hadronic b-quark #phi  ;#phi;Events", 100, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+
 #-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
 
 ## Define useful functions -*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
@@ -340,7 +314,7 @@ def fromHardProcess(statusFlags):
         return (status_flags_int & (1 << 11)) != 0
     except ValueError:
         return False
-#-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
+#-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*-----------------------------------------------------------------------------------------#
     
 ### Start main loop over the events
 def process_event(entry, histograms, relevant_pdgIds):
@@ -355,18 +329,13 @@ def process_event(entry, histograms, relevant_pdgIds):
     jets_from_w, jets_from_w_info = [], []
     last_copy_top_decays, last_copy_partons = [], []
     first_copy_partons = []
-    hardprocess_beforeFSR = []
     ishard_process = []
     fromHardProcess_jets = []
     leptons = []
     w_quarks1, w_quarks2, w_quarks_indices = [], [], []
-    met_vector = ROOT.TLorentzVector() 
-    values_and_weights = []
+    met_vector = ROOT.TLorentzVector()
+    had_b_4vec = ROOT.TLorentzVector()
     jets =[]
-    leptonic_decay = False
-    hadronic_decay = False
-    electron_found = False
-    muon_found = False   
     top_4vec = None
     antitop_4vec = None
     top_related_parton_indices = set()
@@ -375,11 +344,23 @@ def process_event(entry, histograms, relevant_pdgIds):
 
     # Standard Model weight
     weight_0 = getattr(entry, "LHEWeight_ctGRe_0p_cQj18_0p_cQj38_0p_cQj11_0p_cjj31_0p_ctu8_0p_ctd8_0p_ctj8_0p_cQu8_0p_cQd8_0p_ctu1_0p_ctd1_0p_ctj1_0p_cQu1_0p_cQd1_0p")
-    # EFT weight for ctGRe=1
+
+    ## Linear EFT weights
+    # EFT weight for ctGRe linear
     weight_1 = getattr(entry, "LHEWeight_ctGRe_1p_cQj18_0p_cQj38_0p_cQj11_0p_cjj31_0p_ctu8_0p_ctd8_0p_ctj8_0p_cQu8_0p_cQd8_0p_ctu1_0p_ctd1_0p_ctj1_0p_cQu1_0p_cQd1_0p")
+    # EFT weight for ctu1 linear
+    weight_ctu1 = getattr(entry, "LHEWeight_ctGRe_0p_cQj18_0p_cQj38_0p_cQj11_0p_cjj31_0p_ctu8_0p_ctd8_0p_ctj8_0p_cQu8_0p_cQd8_0p_ctu1_1p_ctd1_0p_ctj1_0p_cQu1_0p_cQd1_0p")
+    # EFT weight for cQj11 linear
+    weight_cQj11 = getattr(entry, "LHEWeight_ctGRe_0p_cQj18_0p_cQj38_0p_cQj11_1p_cjj31_0p_ctu8_0p_ctd8_0p_ctj8_0p_cQu8_0p_cQd8_0p_ctu1_0p_ctd1_0p_ctj1_0p_cQu1_0p_cQd1_0p")
+
+    ## Quadratic EFT weights
+    # EFT weight for ctu1 quadratic
+    weight_ctu1_quad = getattr(entry, "LHEWeight_ctGRe_0p_cQj18_0p_cQj38_0p_cQj11_0p_cjj31_0p_ctu8_0p_ctd8_0p_ctj8_0p_cQu8_0p_cQd8_0p_ctu1_2p_ctd1_0p_ctj1_0p_cQu1_0p_cQd1_0p")
+    # EFT weight for cQj11 quadratic
+    weight_cQj11_quad = getattr(entry, "LHEWeight_ctGRe_0p_cQj18_0p_cQj38_0p_cQj11_2p_cjj31_0p_ctu8_0p_ctd8_0p_ctj8_0p_cQu8_0p_cQd8_0p_ctu1_0p_ctd1_0p_ctj1_0p_cQu1_0p_cQd1_0p")
 
     # print("SM weight: ", weight_0)
-    # print("ctGRe weight: ", weight_1)
+    # print("ctGRe weight: ", weight_1) 
 
     # LHE Q2 scale weights
     lheScaleWeights = getattr(entry,"LHEScaleWeight")
@@ -388,10 +369,10 @@ def process_event(entry, histograms, relevant_pdgIds):
     scale_weight_1 = lheScaleWeights[1] * weight_1 # ren scfact 0.5, fac scfact 1.0
     scale_weight_3 = lheScaleWeights[3] * weight_1 # ren scfact 1.0, fac scfact 0.5
     scale_weight_4 = lheScaleWeights[4] * weight_1 # ren scfact 1.0, fac scfact 1.0
-    scale_weight_6 = lheScaleWeights[6] * weight_1 # ren scfact 2.0, fac scfact 0.5
+    scale_weight_6 = lheScaleWeights[6] * weight_1 # ren scfact 2.0, fac scfact 1.0
     scale_weight_7 = lheScaleWeights[7] * weight_1 # ren scfact 2.0, fac scfact 1.0
 
-    # processing particless -*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+    # processing particless ------------------------------------------------------------------------------------------------------------------------------------------------------*
     # Loop over all particles in the event
     for i in range(entry.nGenPart):
         # Get ith-particle properties
@@ -427,7 +408,7 @@ def process_event(entry, histograms, relevant_pdgIds):
             # if abs(pdgId) in (1,2,3,4,5,21): 
             fromHardProcess_jets.append((parton_4vec, i))
         
-        # Check for last copy of relevant particle --*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+        # Check for last copy of relevant particle ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
         if abs(pdgId) in relevant_pdgIds and is_last_copy(statusFlags):  # relevant pdgIDs = {12, 14, 16, 24, 1, 2, 3, 4, 5, 6, 21, 11, 13, 15}
             # Check if particle is a top or antitop quark
             if abs(pdgId) == 6:
@@ -438,61 +419,73 @@ def process_event(entry, histograms, relevant_pdgIds):
                 has_leptonic_w_decay = False
                 has_hadronic_w_decay = False
                 vec = ROOT.TLorentzVector()
-                vec.SetPtEtaPhiM(entry.GenPart_pt[i], entry.GenPart_eta[i], entry.GenPart_phi[i], entry.GenPart_mass[i]) # <<<-*--*---*-----*--------*-------------*---------------------* top quarks
+                vec.SetPtEtaPhiM(entry.GenPart_pt[i], entry.GenPart_eta[i], entry.GenPart_phi[i], entry.GenPart_mass[i]) # <<<-* top quarks
                 if pdgId == 6:
                     top_4vec = vec
                 else:
                     antitop_4vec = vec
                 tops.append((top_4vec, pdgId)) 
                 
+            # i is still the index of the top quark
+                
                 # Loop over all particles, again
                 for j in range(entry.nGenPart):
-                    # Check if Mother of jth-particle is the top quark found above ---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                    # Check if Mother of jth-particle is the top quark found above ----------------------------------------------------------------------------------------------------------------------------------------------*
                     # and if the jth-particle is a W boson or a b-quark
                     if entry.GenPart_genPartIdxMother[j] == i and abs(entry.GenPart_pdgId[j]) in [24, 5]:
                         last_copy_decays.append((pt, eta, phi, pdgId, i)) # append as a tuple
                         top_related_parton_indices.add(j)
                         daughter_pdgId = entry.GenPart_pdgId[j]
 
-                        # Double check that top quark mother really is last_copy
+                        # Double check that top quark mother really is last_copy << is this necessary? last_copy already checked above and if not satisfied, has_leptonic
                         if daughter_pdgId != 6 and daughter_pdgId != -6:
 
-                            # Check if the daughter is a W boson -----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                    # j is still the index of the b quark
+
+                            # Check if the daughter is a W boson -----------------------------------------------------------------------------------------------------------------------------------------------------------------*
                             if abs(daughter_pdgId) == 24:
                                 w_daughter = j
                                 w_4vec = ROOT.TLorentzVector()
-                                w_4vec.SetPtEtaPhiM(entry.GenPart_pt[w_daughter], entry.GenPart_eta[w_daughter], entry.GenPart_phi[w_daughter], entry.GenPart_mass[w_daughter]) # <<<-*--*---*-----*--------*-------------*---------------------* W boson
+                                w_4vec.SetPtEtaPhiM(entry.GenPart_pt[w_daughter], entry.GenPart_eta[w_daughter], entry.GenPart_phi[w_daughter], entry.GenPart_mass[w_daughter]) # <<<-*--* W bosons
                                 w_bosons.append(w_4vec)
-                                # Check if W decays leptonically or hadronically --------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                                # Check if W decays leptonically or hadronically --------------------------------------------------------------------------------------------------------------------------------------------------*
                                 # List comprehension syntax: ({expression} for {item} in {list} {if condition}) if condition is evaluated first to make the list, then elements of said list are evaluated by the expression
                                 if any(abs(entry.GenPart_pdgId[k]) in [11, 13] for k in range(entry.nGenPart) if entry.GenPart_genPartIdxMother[k] == w_daughter):
                                     has_leptonic_w_decay = True
                                 elif any(abs(entry.GenPart_pdgId[k]) in [1, 2, 3, 4] for k in range(entry.nGenPart) if entry.GenPart_genPartIdxMother[k] == w_daughter):
                                     has_hadronic_w_decay = True
-                            # Check if the daughter is a b-quark -----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                            # Check if the daughter is a b-quark -----------------------------------------------------------------------------------------------------------------------------------------------------------------*
                             elif abs(daughter_pdgId) == 5:
                                 b_daughter = j
                                 b_4vec = ROOT.TLorentzVector() 
-                                b_4vec.SetPtEtaPhiM(entry.GenPart_pt[b_daughter], entry.GenPart_eta[b_daughter], entry.GenPart_phi[b_daughter], entry.GenPart_mass[b_daughter]) # <<<-*--*---*-----*--------*-------------*---------------------* b-quark
+                                b_4vec.SetPtEtaPhiM(entry.GenPart_pt[b_daughter], entry.GenPart_eta[b_daughter], entry.GenPart_phi[b_daughter], entry.GenPart_mass[b_daughter]) # <<<-*--*---* b-quarks
                                 b_quarks.append((b_4vec, entry.GenPart_pdgId[j]))
+                                # had_b_quark = False # <<<-*--*---*-----*--------* new code
+                                # for m in range(entry.nGenPart):
+                                #     if entry.GenPart_genPartIdxMother[m] == i and abs(entry.GenPart_pdgId[m]) == 24:
 
-                # For leptonically decaying top quarks ---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                                #         for l in range(entry.nGenPart):
+                                #             if entry.GenPart_genPartIdxMother[l] == m and abs(entry.GenPart_pdgId[l]) in [1, 2, 3, 4]:
+                                #                 had_b_quark = True
+                                #                 break      
+         
+                # For leptonically decaying top quarks -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
                 if has_leptonic_w_decay:
 
                     # Loop over all particles, again again
                     for k in range(entry.nGenPart):
 
-                        # Check if Mother of kth-particle is the W boson found above -----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                        # Check if Mother of kth-particle is the W boson found above ---------------------------------------------------------------------------------------------------------------------------------------------*
                         if entry.GenPart_genPartIdxMother[k] == w_daughter:
                             top_related_parton_indices.add(k)
 
-                            # Check if the kth-particle is an electron or muon --------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                            # Check if the kth-particle is an electron or muon ---------------------------------------------------------------------------------------------------------------------------------------*
                             if abs(entry.GenPart_pdgId[k]) in [11, 13]:  
                                 lepton_pdg = entry.GenPart_pdgId[k]
                                 lepton_pt = entry.GenPart_pt[k]
                                 lepton_eta = entry.GenPart_eta[k]
                                 lepton_phi = entry.GenPart_phi[k]
-                                leptons.append((lepton_pt, lepton_eta, lepton_phi, lepton_pdg))
+                                leptons.append((lepton_pt, lepton_eta, lepton_phi, lepton_pdg)) # <<<-*--*---*-----* leptons
                                 leptonic_decay = True
                                 if abs(lepton_pdg) == 11:
                                     electron_found = True
@@ -501,13 +494,13 @@ def process_event(entry, histograms, relevant_pdgIds):
                             else: 
                                 continue # skip tau decays
 
-                        # Check if the kth-particle is an electron or muon or tau neutrino --------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                        # Check if the kth-particle is an electron or muon or tau neutrino ---------------------------------------------------------------------------------------------------------------------------------------*
                         if abs(pdgId) in [12, 14, 16]:  
                             neutrino = ROOT.TLorentzVector()
-                            neutrino.SetPtEtaPhiM(pt, eta, phi, mass) # <<<-*--*---*-----*--------*-------------*---------------------* neutrino
+                            neutrino.SetPtEtaPhiM(pt, eta, phi, mass) # <<<-*--*---*-----*--------* neutrinos
                             met_vector += neutrino
 
-                # For hadronically decaying top quarks ---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                # For hadronically decaying top quarks -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
                 if has_hadronic_w_decay:  
 
                     # Loop over all particles, again again again
@@ -516,15 +509,20 @@ def process_event(entry, histograms, relevant_pdgIds):
                             w_quarks_indices.append(j)
                             top_related_parton_indices.add(j)
 
-                    # Check that W decays into exactly two quarks -----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                    # Now that we know this top (with index i) has decayed hadronically, we know its b quark daughter is the hadronic b quark
+                    for m in range(entry.nGenPart):
+                        if entry.GenPart_genPartIdxMother[m] == i and abs(entry.GenPart_pdgId[m]) == 5:
+                            had_b_4vec.SetPtEtaPhiM(entry.GenPart_pt[m], entry.GenPart_eta[m], entry.GenPart_phi[m], entry.GenPart_mass[m]) # <<<-*--*---* HADRONIC b-quark
+
+                    # Check that W decays into exactly two quarks -------------------------------------------------------------------------------------------------------------------------------------------------------------------*
                     if len(w_quarks_indices) == 2:
                         hadronic_decay = True
                         hadronic_top_pt.append(pt)
                         quark1_vec = ROOT.TLorentzVector()
                         quark2_vec = ROOT.TLorentzVector()
                         quark1_index, quark2_index = w_quarks_indices
-                        quark1_vec.SetPtEtaPhiM(entry.GenPart_pt[quark1_index], entry.GenPart_eta[quark1_index], entry.GenPart_phi[quark1_index], entry.GenPart_mass[quark1_index]) # <<<-*--*---*-----*--------*-------------*---------------------* quark1 from W-decay
-                        quark2_vec.SetPtEtaPhiM(entry.GenPart_pt[quark2_index], entry.GenPart_eta[quark2_index], entry.GenPart_phi[quark2_index], entry.GenPart_mass[quark2_index]) # <<<-*--*---*-----*--------*-------------*---------------------* quark2 from W-decay
+                        quark1_vec.SetPtEtaPhiM(entry.GenPart_pt[quark1_index], entry.GenPart_eta[quark1_index], entry.GenPart_phi[quark1_index], entry.GenPart_mass[quark1_index]) # <<<-*--*---*-----*--------*-------------* quark1 from W-decay
+                        quark2_vec.SetPtEtaPhiM(entry.GenPart_pt[quark2_index], entry.GenPart_eta[quark2_index], entry.GenPart_phi[quark2_index], entry.GenPart_mass[quark2_index]) # <<<-*--*---*-----*--------*-------------* quark2 from W-decay
                         w_quarks1.append((quark1_vec, entry.GenPart_pdgId[quark1_index]))
                         w_quarks2.append((quark2_vec, entry.GenPart_pdgId[quark2_index]))
                         hadronic_w_mass = (quark1_vec + quark2_vec).M()
@@ -534,7 +532,7 @@ def process_event(entry, histograms, relevant_pdgIds):
                             histograms['h_hadronic_w_mass_ctGRe'].Fill(hadronic_w_mass, weight_1)
                             
             
-                # b-quarks ---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+                # b-quarks ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
                 if b_daughter is not None:
                     b_vector = ROOT.TLorentzVector()
                     b_vector.SetPtEtaPhiM(entry.GenPart_pt[b_daughter], entry.GenPart_eta[b_daughter], entry.GenPart_phi[b_daughter], entry.GenPart_mass[b_daughter])   
@@ -544,7 +542,7 @@ def process_event(entry, histograms, relevant_pdgIds):
   
         else:
             continue
-    ## Finished all loops over particles -*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
+    ## Finished processing particles ---------------------------------------------------------------------------------------------------------------------------------------------*
         
     # print(last_copy_partons[1])
 
@@ -569,37 +567,6 @@ def process_event(entry, histograms, relevant_pdgIds):
     ## processing jets -*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
     if len(w_quarks_indices) == 2 and len(b_quarks) == 2:
         
-        # for jet_index, jet in enumerate(jets):
-        #     for parton_index, (parton_vec, _) in enumerate(partons):
-        #         dR = deltaR(jet.Eta(), jet.Phi(), parton_vec.Eta(), parton_vec.Phi())
-        #         dR_list.append((dR, jet_index, parton_index))
-        # dR_list.sort(key=lambda x: x[0])
-        
-        # for dR, jet_index, parton_index in dR_list:
-        #     if dR < 0.4 and parton_index not in matched_partons_indices:
-        #         matched_jets_indices.add(jet_index)
-        #         matched_partons_indices.add(parton_index)
-        #         matches.append((jets[jet_index], partons[parton_index]))
-        # all_dR_matches = []
-
-        # for jet_index, jet in enumerate(jets):
-        #     for parton_index, (parton_vec, parton_pdgId) in enumerate(hardprocess_beforeFSR):
-        #         dR = deltaR(jet.Eta(), jet.Phi(), parton_vec.Eta(), parton_vec.Phi())
-        #         all_dR_matches.append((dR, jet_index, parton_index, parton_pdgId))
-        # all_dR_matches.sort(key=lambda x: x[0])
-
-        # for dR, jet_index, parton_index, parton_pdgId in all_dR_matches:
-        #     if dR < 0.4 and jet_index not in matched_jets_indices and parton_index not in matched_partons_indices:
-        #         matched_jets_indices.add(jet_index)
-        #         matched_partons_indices.add(parton_index)
-        #         matches_hardprocess.append((jets[jet_index], (hardprocess_beforeFSR[parton_index][0], parton_pdgId)))
-        # matched_quark_jets_hardprocess = [jet for jet, parton in matches_hardprocess if abs(parton[1]) in [1, 2, 3, 4, 5, 21]]
-
-        # print "All potential matches sorted by delta R:"
-        # for dR, jet_index, parton_index, parton_pdgId in all_dR_matches:
-        #     print "Delta R: {:.3f}, Jet index: {}, Parton index: {}, Parton PDG ID: {}".format(dR, jet_index, parton_index, parton_pdgId)
-        
-
         # jet collection = jets
         jets = []
         for j in range(entry.nGenJet):
@@ -666,27 +633,14 @@ def process_event(entry, histograms, relevant_pdgIds):
                     matched_partons_indices_ishardprocess.add(closest_parton_index)
                     additional_ishardprocess_jets.append((jet, ishard_process[closest_parton_index]))
 
-
-        # if (len(b_quark_jets)<2 or len(jets_from_w)<2):
-        #     print ("Total jets:", len(jets))
-        #     print ("Total partons:", len(partons))
-            
-        #     print("bquarks matched: ", len(b_quark_jets))
-        #     print("jets_from_w matched: ", len(jets_from_w))
-            
-        #     for dR, jet_index, parton_index in dR_list:
-        #         if dR < 5:
-        #             print("Delta R: {}, Jet index: {}, Parton index: {}". format(dR,jet_index, parton_index))
-        
-        
-        
+                
         # checking if there is any overlap 
         jets_from_b_set = set(b_quark_jets)
         jets_from_w_set = set(jets_from_w)
 
         overlapping_jets = jets_from_b_set.intersection(jets_from_w_set)
         if len(overlapping_jets)>0:
-            print("overlapping: ", len(overlapping_jets))
+            print "overlapping: ", len(overlapping_jets)
 
         
         # matching partons in fromHARDPROCESS with jets excluding ttbar jets
@@ -752,6 +706,19 @@ def process_event(entry, histograms, relevant_pdgIds):
         histograms['h_jet_multiplicity_ishardprocess_scale_4'].Fill(total_jets_count, scale_weight_4)
         histograms['h_jet_multiplicity_ishardprocess_scale_6'].Fill(total_jets_count, scale_weight_6)
         histograms['h_jet_multiplicity_ishardprocess_scale_7'].Fill(total_jets_count, scale_weight_7)
+
+        # Fill histograms for hadronic b quarks
+        histograms['h_had_b_4vec_pt'].Fill(had_b_4vec.Pt())
+        histograms['h_had_b_4vec_eta'].Fill(had_b_4vec.Eta())
+        histograms['h_had_b_4vec_phi'].Fill(had_b_4vec.Phi())
+        histograms['h_had_b_4vec_mass'].Fill(had_b_4vec.M())
+
+        histograms['h_had_b_4vec_pt_weight_ctu1'].Fill(had_b_4vec.Pt(), weight_ctu1)
+        histograms['h_had_b_4vec_eta_weight_ctu1'].Fill(had_b_4vec.Eta(), weight_ctu1)
+        histograms['h_had_b_4vec_phi_weight_ctu1'].Fill(had_b_4vec.Phi(), weight_ctu1)
+
+
+        
         
         jet_pt_cut = 10
         leading_jet, second_leading_jet = select_leading_jets_from_matched(matches, jet_pt_cut) 
@@ -1032,6 +999,8 @@ def process_event(entry, histograms, relevant_pdgIds):
                 
 
     return tops, hadronic_top_pt, leptons, b_quarks, w_quarks1, w_quarks2, last_copy_partons
+    ### End of process_event
+#-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*-----------------------------------------------------------------------------------------#
 
 # This function identifies jets that are closely matched with last copy partons. 
 # It appends a tuple to matched_jets which includes the jet and its index in the GenJet collection.
@@ -1084,20 +1053,6 @@ def select_leading_jets_from_matched(matches, jet_pt_cut):
     return leading_jet, second_leading_jet
 
 
-# This function checks if any of the b-quarks (from the b_quarks list, so it is from top) is the same as the leading or second-leading jet (identified by their indices). 
-# If it finds a match, it returns True along with the b-quark's vector (b_vector)
-# Otherwise, it returns False and None
-
-
-# def check_b_jet_from_top(b_quarks, leading_jet, second_leading_jet):
-#     for b_quark in b_quarks:
-#         b_vector, _ = b_quark
-#         if leading_jet and deltaR(leading_jet[0].Eta(), leading_jet[0].Phi(), b_vector.Eta(), b_vector.Phi()) < 0.4:
-#             return True, b_vector
-#         elif second_leading_jet and deltaR(second_leading_jet[0].Eta(), second_leading_jet[0].Phi(), b_vector.Eta(), b_vector.Phi()) < 0.4:
-#             return True, b_vector
-#     return False, None
-
 # This function correctly identifies the leading b-quark that is not part of the leading or second-leading jets. 
 # It iterates through the b_quarks, excludes those that match the leading or second-leading jets, and then finds the one with the highest Pt.
 def find_leading_b_quark(b_quarks, leading_jet, second_leading_jet, last_copy_partons):
@@ -1119,7 +1074,7 @@ def find_leading_b_quark(b_quarks, leading_jet, second_leading_jet, last_copy_pa
 # Main function that reads the input file, fills the histograms, and returns the number of events processed.
 totalEvents = 0
 def analyze(filename):
-    print("Processing file:", filename)
+    print "Processing file:", filename
     
     if not os.path.isfile(filename):
         print "Error: The path provided is not a file:", filename
@@ -1138,7 +1093,7 @@ def analyze(filename):
     
     global totalEvents
     totalEvents += tree.GetEntries()
-    print("Number of events in file:", int(tree.GetEntries()))
+    print "Number of events in file:", int(tree.GetEntries())
     
     relevant_pdgIds = {12, 14, 16, 24, 1, 2, 3, 4, 5, 6, 21, 11, 13, 15}
     
@@ -1186,6 +1141,15 @@ def analyze(filename):
 
     "h_bquark_pt" : h_bquark_pt,
     "h_bquark_eta": h_bquark_eta,
+
+    "h_had_b_4vec_pt" : h_had_b_4vec_pt,
+    "h_had_b_4vec_eta" : h_had_b_4vec_eta,
+    "h_had_b_4vec_phi" : h_had_b_4vec_phi,
+    "h_had_b_4vec_mass" : h_had_b_4vec_mass,
+
+    "h_had_b_4vec_pt_weight_ctu1" :h_had_b_4vec_pt_weight_ctu1,
+    "h_had_b_4vec_eta_weight_ctu1" : h_had_b_4vec_eta_weight_ctu1,
+    "h_had_b_4vec_phi_weight_ctu1" : h_had_b_4vec_phi_weight_ctu1,
 
     "h_pdgId_last_copy": h_pdgId_last_copy,
     "h_pdgId_first_copy": h_pdgId_first_copy,
@@ -1290,38 +1254,6 @@ def analyze(filename):
     "h_jet_multiplicity_ishardprocess_scale_7" : h_jet_multiplicity_ishardprocess_scale_7,
     "h_jet_multiplicity_last_copy_scale_7" : h_jet_multiplicity_last_copy_scale_7,
     
-    # 'h_leptonPt_Down': h_leptonPt_Down,
-    # 'h_leptonEta_Down': h_leptonEta_Down,
-    # 'h_electronPt_Down' : h_electronPt_Down,
-    # 'h_electronEta_Down': h_electronEta_Down,
-    # 'h_muonPt_Down': h_muonPt_Down,
-    # 'h_muonEta_Down': h_muonEta_Down,
-    # 'h_topPt_Down': h_topPt_Down,
-    # 'h_topEta_Down': h_topEta_Down,
-    # 'h_antitopPt_Down': h_antitopPt_Down,
-    # 'h_antitopEta_Down': h_antitopEta_Down,
-    # 'h_invariantMass_Down': h_invariantMass_Down,
-    # "h_leading_jet_pt_Down" : h_leading_jet_pt_Down,
-    # "h_second_leading_jet_pt_Down" : h_second_leading_jet_pt_Down,
-    # "h_jet_multiplicity_ishardprocess_Down" : h_jet_multiplicity_ishardprocess_Down,
-    # "h_jet_multiplicity_last_copy_Down" : h_jet_multiplicity_last_copy_Down,
-    
-    # 'h_leptonPt_Up': h_leptonPt_Up,
-    # 'h_leptonEta_Up': h_leptonEta_Up,
-    # 'h_electronPt_Up' : h_electronPt_Up,
-    # 'h_electronEta_Up': h_electronEta_Up,
-    # 'h_muonPt_Up': h_muonPt_Up,
-    # 'h_muonEta_Up': h_muonEta_Up,
-    # 'h_topPt_Up': h_topPt_Up,
-    # 'h_topEta_Up': h_topEta_Up,
-    # 'h_antitopPt_Up': h_antitopPt_Up,
-    # 'h_antitopEta_Up': h_antitopEta_Up,
-    # 'h_invariantMass_Up': h_invariantMass_Up,
-    # "h_leading_jet_pt_Up" : h_leading_jet_pt_Up,
-    # "h_second_leading_jet_pt_Up" : h_second_leading_jet_pt_Up,
-    # "h_jet_multiplicity_ishardprocess_Up" : h_jet_multiplicity_ishardprocess_Up,
-    # "h_jet_multiplicity_last_copy_Up" : h_jet_multiplicity_last_copy_Up,
-    
     'h_leptonPt_weightSM': h_leptonPt_weightSM,
     'h_leptoneta_weightSM': h_leptoneta_weightSM,
     'h_leptonphi_weightSM': h_leptonphi_weightSM,
@@ -1419,7 +1351,7 @@ def createCanvas(histogram, title, filename, logy=False, fillColor=None, lineCol
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python EFT_nanofiles_fully_semileptonic.py <input file>")
+        print "Usage: python EFT_nanofiles_fully_semileptonic.py <input file>"
         sys.exit(1)
 
     input_filename = sys.argv[1]
@@ -1442,78 +1374,7 @@ if __name__ == "__main__":
     #     canvas_filename = "{}.png".format(name)
     #     createCanvas(hist, canvas_title, canvas_filename, output_dir=output_dir)
 
-    print("Processed: {}".format(input_filename))
+    print "Processed: {}".format(input_filename) 
 
-# createCanvas(h_leptonPt, "Lepton pT Distribution", "leptonPtDistribution.png", True)
-# createCanvas(h_leptoneta, "Lepton Eta Distribution", "leptonEtaDistribution.png")
-# createCanvas(h_leptonphi, "Lepton Phi Distribution", "leptonPhiDistribution.png")
-# createCanvas(h_leptonFlavor, "Lepton Flavor Distribution", "leptonFlavorDistribution.png")
-# createCanvas(h_electronPt, "Electron pT Distribution", "electronPtDistribution.png", True)
-# createCanvas(h_electronPt_aftercut200, "Electron pT After Cut 200 Distribution", "electronPtAfterCut200Distribution.png", True)
-# createCanvas(h_electronPt_aftercut400, "Electron pT After Cut 400 Distribution", "electronPtAfterCut400Distribution.png", True)
-# createCanvas(h_electroneta, "Electron Eta Distribution", "electronEtaDistribution.png")
-# createCanvas(h_electroneta_aftercut200, "Electron Eta After Cut 200 Distribution", "electronEtaAfterCut200Distribution.png")
-# createCanvas(h_electroneta_aftercut400, "Electron Eta After Cut 400 Distribution", "electronEtaAfterCut400Distribution.png")
-# createCanvas(h_muonPt, "Muon pT Distribution", "muonPtDistribution.png", True)
-# createCanvas(h_muonPt_aftercut200, "Muon pT After Cut 200 Distribution", "muonPtAfterCut200Distribution.png", True)
-# createCanvas(h_muonPt_aftercut400, "Muon pT After Cut 400 Distribution", "muonPtAfterCut400Distribution.png", True)
-# createCanvas(h_muoneta, "Muon Eta Distribution", "muonEtaDistribution.png")
-# createCanvas(h_muoneta_aftercut200, "Muon Eta After Cut 200 Distribution", "muonEtaAfterCut200Distribution.png")
-# createCanvas(h_muoneta_aftercut400, "Muon Eta After Cut 400 Distribution", "muonEtaAfterCut400Distribution.png")
-# createCanvas(h_hadronic_w_mass, "Hadronic Decaying W Mass ", "hadronicWMassDistribution.png")
-# createCanvas(h_hadronic_w_mass_aftercut200, "Hadronic Decaying W Mass After Cuts & TopPt>200", "hadronicWMassAfterCut200Distribution.png")
-# createCanvas(h_hadronic_w_mass_aftercut400, "Hadronic Decaying W Mass After Cuts & TopPt>400", "hadronicWMassAfterCut400Distribution.png")
-# createCanvas(h_topPt, "Top Quark pT ", "topPtDistribution.png", True)
-# createCanvas(h_topPt_aftercut200, "Top Quark pT After Cuts & TopPt>200", "topPtAfterCut200Distribution.png", True)
-# createCanvas(h_topPt_aftercut400, "Top Quark pT After Cuts & TopPt>400", "topPtAfterCut400Distribution.png", True)
-# createCanvas(h_antitopPt, "Anti-Top Quark pT ", "antitopPtDistribution.png", True)
-# createCanvas(h_antitopPt_aftercut200, "Anti-Top Quark pT After Cuts & TopPt>200", "antitopPtAfterCut200Distribution.png", True)
-# createCanvas(h_antitopPt_aftercut400, "Anti-Top Quark pT After Cuts & TopPt>400", "antitopPtAfterCut400Distribution.png", True)
-# createCanvas(h_bquark_pt_electron, "b-quark pT Electron Channel", "bquarkPtDistribution.png", True)
-# createCanvas(h_bquark_eta_electron, "b-quark Eta Electron Channel", "bquarkEtaDistribution.png")
-# createCanvas(h_bquark_pt_muon, "b-quark pT Muon Channel", "bquarkPtDistribution.png", True)
-# createCanvas(h_bquark_eta_muon, "b-quark Eta Muon Channel ", "bquarkEtaDistribution.png")
-
-# createCanvas(h_bquark_pt_aftercut200, "b-quark pT After Cuts & TopPt>200", "bquarkPtAfterCut200Distribution.png", True)
-# createCanvas(h_bquark_pt_aftercut400, "b-quark pT After Cuts & TopPt>400", "bquarkPtAfterCut400Distribution.png", True)
-# createCanvas(h_topMultiplicity, "Top Multiplicity ", "topMultiplicityDistribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_topMultiplicity_aftercut200, "Top Multiplicity After Cuts & TopPt>200", "topMultiplicityAfterCut200Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_topMultiplicity_aftercut400, "Top Multiplicity After Cuts & TopPt>400", "topMultiplicityAfterCut400Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_antitopMultiplicity, "Anti-Top Multiplicity ", "antitopMultiplicityDistribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_antitopMultiplicity_aftercut200, "Anti-Top Multiplicity After Cuts & Pt>200", "antitopMultiplicityAfterCut200Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_antitopMultiplicity_aftercut400, "Anti-Top Multiplicity After Cuts & Pt>400", "antitopMultiplicityAfterCut400Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_jetMultiplicity_fromW, "Jet Multiplicity from W ", "jetMultiplicityFromWDistribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_jetMultiplicity_fromW_after200, "Jet Multiplicity from W After Cuts & Pt>200", "jetMultiplicityFromWAfterCut200Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_jetMultiplicity_fromW_after400, "Jet Multiplicity from W After Cuts & Pt>400", "jetMultiplicityFromWAfterCut400Distribution.png", False, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_MET, "MET ", "METDistribution.png")
-# createCanvas(h_MET_after200, "MET After Cuts & Pt>200", "METAfterCut200Distribution.png")
-# createCanvas(h_MET_after400, "MET After Cuts & Pt>400", "METAfterCut400Distribution.png")
-# createCanvas(h_invariantMass, "Invariant Mass", "invariantMassDistribution.png", True)
-# createCanvas(h_invariantMass_aftercut200, "Invariant Mass After Cuts & Pt>200", "invariantMassAfterCut200Distribution.png", True)
-# createCanvas(h_invariantMass_aftercut400, "Invariant Mass After Cuts & Pt>400", "invariantMassAfterCut400Distribution.png", True)
-# createCanvas(h_jetMultiplicity, "Jet Multiplicity Without Cuts", "jetMultiplicityDistribution.png", True, fillColor=ROOT.kBlue - 10,lineColor=ROOT.kBlue)
-# createCanvas(h_nonTopMotherJets, "Jets without Top as Mother", "nonTopMotherJetsDistribution.png")
-# createCanvas(h_LHE_HT_before, "LHE_HT ", "LHE_HTBeforeCutsDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_aftercut200, "Muon Channel LHE_HT After Cuts & Pt>200", "muonLHE_HTAfterCut200Distribution.png", True)
-# createCanvas(h_muon_LHE_HT_aftercut400, "Muon Channel LHE_HT After Cuts & Pt>400", "muonLHE_HTAfterCut400Distribution.png", True)
-# createCanvas(h_ele_LHE_HT_aftercut200, "Electron Channel LHE_HT After Cuts & Pt>200", "eleLHE_HTAfterCut200Distribution.png", True)
-# createCanvas(h_ele_LHE_HT_aftercut400, "Electron Channel LHE_HT After Cuts & Pt>400", "eleLHE_HTAfterCut400Distribution.png", True)
-# createCanvas(h_ele_LHE_HT_before, "Electron Channel LHE_HT", "eleLHE_HTBeforeCutsDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_lepton_cut, "Electron Channel LHE_HT After Electron Pt&Eta Cut", "eleLHE_HTAfterLeptonCutDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_jet_cut, "Electron Channel LHE_HT After Electron and Jet Cuts", "eleLHE_HTAfterJetCutDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_met_cut, "Electron Channel LHE_HT After Electron, Jet, and MET Cut", "eleLHE_HTAfterMETCutDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_toppt200_cut, "Electron Channel LHE_HT After Cuts & Pt>200", "eleLHE_HTAfterTopPt200CutDistribution.png", True)
-# createCanvas(h_ele_LHE_HT_after_toppt400_cut, "Electron Channel LHE_HT After Cuts & Pt>400", "eleLHE_HTAfterTopPt400CutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_before, "Muon Channel LHE_HT", "muonLHE_HTBeforeCutsDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_lepton_cut, "Muon Channel LHE_HT After Muon Pt&Eta Cut", "muonLHE_HTAfterLeptonCutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_jet_cut, "Muon Channel LHE_HT After Muon and Jet Cuts", "muonLHE_HTAfterJetCutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_met_cut, "Muon Channel LHE_HT After Muon, Jet, and MET Cut", "muonLHE_HTAfterMETCutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_toppt200_cut, "Muon Channel LHE_HT After Cuts & Pt>200", "muonLHE_HTAfterTopPt200CutDistribution.png", True)
-# createCanvas(h_muon_LHE_HT_after_toppt400_cut, "Muon Channel LHE_HT After Cuts & Pt>400", "muonLHE_HTAfterTopPt400CutDistribution.png", True)
-# createCanvas(h_both_decays, "Events with Both Leptonic and Hadronic Decays", "bothdecays.png", False )     
-# createCanvas(h_jetFromW_pt, "Jet pT from W ; pT (GeV)", "jetfromW_pt.png")
-# createCanvas(h_jetFromW_eta,"Jet Eta from W ", "jetfromW_eta.png")
-# createCanvas(h_jetFromW_pt_aftercut200, "Jet pT from W After Cuts & TopPt>200; pT (GeV)", "jetfromW_pt_after200.png")
-# createCanvas(h_jetFromW_pt_aftercut400, "Jet pT from W After Cuts & TopPt>400; pT (GeV)", "jetfromW_pt_after400.png") 
        
-print("Total number of events:", int(totalEvents))
+print "Total number of events:", int(totalEvents) 
