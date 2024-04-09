@@ -2,8 +2,8 @@ import ROOT
 
 ROOT.gROOT.SetBatch(True)
 
-Infilename  = "/nfs/dust/cms/user/ricardo/EFT/CMSSW_10_6_26/src/EFT_gen/EFT_samples/nanogen_folder/condor/output/nanogen_123_ALL_histograms.root"
-Outfilename = "/nfs/dust/cms/user/ricardo/EFT/CMSSW_10_6_26/src/EFT_gen/EFT_samples/nanogen_folder/condor/output/output_overlaidplots.root"
+Infilename  = "/nfs/dust/cms/user/ricardo/EFT/CMSSW_10_6_26/src/EFT_gen/EFT_samples/nanogen_folder/condor/output/nanogen_ALL_histograms.root"
+Outfilename = "/nfs/dust/cms/user/ricardo/EFT/CMSSW_10_6_26/src/EFT_gen/EFT_samples/nanogen_folder/condor/output/EFTnanogenplots_withratio.root"
 
 file1       = ROOT.TFile.Open(Infilename, "READ")
 output_file = ROOT.TFile.Open(Outfilename, "RECREATE")
@@ -13,8 +13,39 @@ print "Output file is:", Outfilename
 
 histograms_to_overlay = [
     ('h_had_b_4vec_pt',   'h_had_b_4vec_pt_weight_ctu1'),
+    ('h_had_b_4vec_pt',   'h_had_b_4vec_pt_weight_cQj11'),
+    ('h_had_b_4vec_pt',   'h_had_b_4vec_pt_weight_ctu1_quad'),
+    ('h_had_b_4vec_pt',   'h_had_b_4vec_pt_weight_cQj11_quad'),
+
     ('h_had_b_4vec_eta',  'h_had_b_4vec_eta_weight_ctu1'),
+    ('h_had_b_4vec_eta',  'h_had_b_4vec_eta_weight_cQj11'),
+    ('h_had_b_4vec_eta',  'h_had_b_4vec_eta_weight_ctu1_quad'),
+    ('h_had_b_4vec_eta',  'h_had_b_4vec_eta_weight_cQj11_quad'),
+
     ('h_had_b_4vec_phi',  'h_had_b_4vec_phi_weight_ctu1'),
+    ('h_had_b_4vec_phi',  'h_had_b_4vec_phi_weight_cQj11'),
+    ('h_had_b_4vec_phi',  'h_had_b_4vec_phi_weight_ctu1_quad'),
+    ('h_had_b_4vec_phi',  'h_had_b_4vec_phi_weight_cQj11_quad'),
+
+    ('h_lepton_pt',       'h_lepton_pt_weight_ctu1'),
+    ('h_lepton_pt',       'h_lepton_pt_weight_cQj11'),
+    ('h_lepton_pt',       'h_lepton_pt_weight_ctu1_quad'),
+    ('h_lepton_pt',       'h_lepton_pt_weight_cQj11_quad'),
+
+    ('h_lepton_eta',      'h_lepton_eta_weight_ctu1'),
+    ('h_lepton_eta',      'h_lepton_eta_weight_cQj11'),
+    ('h_lepton_eta',      'h_lepton_eta_weight_ctu1_quad'),
+    ('h_lepton_eta',      'h_lepton_eta_weight_cQj11_quad'),
+
+    ('h_lepton_phi',      'h_lepton_phi_weight_ctu1'),
+    ('h_lepton_phi',      'h_lepton_phi_weight_cQj11'),
+    ('h_lepton_phi',      'h_lepton_phi_weight_ctu1_quad'),
+    ('h_lepton_phi',      'h_lepton_phi_weight_cQj11_quad'),
+
+    ('h_ttbarMass', 'h_ttbarMass_weight_ctu1'),
+    ('h_ttbarMass', 'h_ttbarMass_weight_cQj11'),
+    ('h_ttbarMass', 'h_ttbarMass_weight_ctu1_quad'),
+    ('h_ttbarMass', 'h_ttbarMass_weight_cQj11_quad'),
 ]
 pastelRed    = ROOT.TColor.GetColor("#FFA07A")  # Pastel red (Light Salmon)
 pastelGreen  = ROOT.TColor.GetColor("#98FB98")  # Pastel green (Pale Green)
@@ -58,10 +89,19 @@ for hist_names in histograms_to_overlay:
     hist1.Draw("hist")
     hist2.Draw("histsame")
 
-    # Syntax for legend: x1, y1, x2, y2
+    # Syntax for TLegend: x1, y1, x2, y2
     legend = ROOT.TLegend(0.75, 0.8, 0.9, 0.9)
-    legend.AddEntry(hist1, "EFT SM")
-    legend.AddEntry(hist2, "EFT ctu1")
+    legend.AddEntry(hist1, "SM")
+    if "ctu1" in hist_names[1]:
+        if "quad" in hist_names[1]:
+            legend.AddEntry(hist2, "EFT: ctu1 (quad)")
+        else:
+            legend.AddEntry(hist2, "EFT: ctu1")
+    elif "cQj11" in hist_names[1]:
+        if "quad" in hist_names[1]:
+            legend.AddEntry(hist2, "EFT: cQj11 (quad)")
+        else:
+            legend.AddEntry(hist2, "EFT: cQj11")
 
     legend.Draw()
     
@@ -73,7 +113,7 @@ for hist_names in histograms_to_overlay:
     ratio.SetLineColor(ROOT.kBlack)
     ratio.SetMinimum(0.8) 
     ratio.SetMaximum(1.2)
-    ratio.GetYaxis().SetTitle("SM/ctu1") 
+    ratio.GetYaxis().SetTitle("SM/EFT") 
     ratio.GetYaxis().SetTitleSize(0.1) 
     ratio.GetYaxis().SetTitleOffset(0.5)
     ratio.GetYaxis().SetLabelSize(0.05) 
@@ -94,8 +134,7 @@ for hist_names in histograms_to_overlay:
     line.Draw("same")
     
     c.Update()
-
-    c.SaveAs("{}_EFTcomparison.png".format(hist_names[0]))
+    c.SaveAs("outputPlots/{}_EFTcomparison.png".format(hist_names[1]))
     
     
     
@@ -111,5 +150,4 @@ for hist_names in histograms_to_overlay:
     
 
 file1.Close()
-# file2.Close()
 output_file.Close()
