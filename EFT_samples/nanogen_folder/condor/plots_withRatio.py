@@ -47,14 +47,12 @@ histograms_to_overlay = [
     ('h_ttbarMass', 'h_ttbarMass_weight_ctu1_quad'),
     ('h_ttbarMass', 'h_ttbarMass_weight_cQj11_quad'),
 ]
-pastelRed    = ROOT.TColor.GetColor("#FFA07A")  # Pastel red (Light Salmon)
-pastelGreen  = ROOT.TColor.GetColor("#98FB98")  # Pastel green (Pale Green)
-pastelBlue   = ROOT.TColor.GetColor("#ADD8E6")  # Pastel blue (Light Blue)
-pastelPurple = ROOT.TColor.GetColor("#DDA0DD")  # Pastel purple (Plum)
-pastelYellow = ROOT.TColor.GetColor("#FFFACD")  # Pastel yellow (Lemon Chiffon)
-pastelCyan   = ROOT.TColor.GetColor("#E0FFFF")  # Pastel cyan (Light Cyan)
+
+counter = 0
+total = len(histograms_to_overlay)
 
 for hist_names in histograms_to_overlay:
+    print "Plotting histogram", hist_names[1], "({}/{})".format(counter+1, total)
 
     hist1 = file1.Get(hist_names[0]) #EFT SM
     hist2 = file1.Get(hist_names[1]) #EFT c*
@@ -82,8 +80,8 @@ for hist_names in histograms_to_overlay:
     hist1.SetLineColor(ROOT.kRed)
     hist2.SetLineColor(ROOT.kGreen-2)
     
-    # hist1.SetLineWidth(3)
-    # hist2.SetLineWidth(3)    
+    hist1.SetLineWidth(3)
+    hist2.SetLineWidth(3)    
     
     pad1.cd()
     hist1.Draw("hist")
@@ -106,7 +104,7 @@ for hist_names in histograms_to_overlay:
     legend.Draw()
     
     pad2.cd()
-    ROOT.gStyle.SetOptStat("0")
+    # ROOT.gStyle.SetOptStat("0")
     
     ratio = hist1.Clone("ratio")
     ratio.Divide(hist2)
