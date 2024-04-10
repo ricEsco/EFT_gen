@@ -23,96 +23,104 @@ if not os.path.exists(output_dir):
 ## nominal (SM) histograms
 h_topPt = ROOT.TH1F("h_topPt", "Top Quark; pT (GeV); Events", 100, 0, 2000)
 h_topEta = ROOT.TH1F("h_topEta", "Top Quark; #eta; Events", 100, -5, 5)
-h_topPhi = ROOT.TH1F("h_topPhi", "Top Quark; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_topPhi = ROOT.TH1F("h_topPhi", "Top Quark; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_topMass = ROOT.TH1F("h_topMass", "Top Quark; Mass; Events", 50, 0, 500)
 
 h_antitopPt = ROOT.TH1F("h_antitopPt", "Anti-Top Quark ; p_{T} [GeV]; Events", 100, 0, 2000)
 h_antitopEta = ROOT.TH1F("h_antitopEta", "Anti-Top Quark; #eta; Events", 100, -5, 5)
-h_antitopPhi = ROOT.TH1F("h_antitopPhi", "Anti-Top Quark; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_antitopPhi = ROOT.TH1F("h_antitopPhi", "Anti-Top Quark; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_antitopMass = ROOT.TH1F("h_antitopMass", "Anti-Top Quark; Mass; Events", 50, 0, 500)
+
+h_hadronictopPt = ROOT.TH1F("h_hadronictopPt", "Hadronic Top Quark; pT (GeV); Events", 100, 0, 2000)
 
 h_ttbarPt = ROOT.TH1F("h_ttbarPt", "ttbar system; pT (GeV); Events", 100, 0, 2000)
 h_ttbarEta = ROOT.TH1F("h_ttbarEta", "ttbar system; #eta; Events", 100, -5, 5)
-h_ttbarPhi = ROOT.TH1F("h_ttbarPhi", "ttbar system; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_ttbarPhi = ROOT.TH1F("h_ttbarPhi", "ttbar system; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_ttbarMass = ROOT.TH1F("h_ttbarMass", "ttbar system; Mass (GeV); Events", 150, 0, 3000)
 
-h_had_b_4vec_pt = ROOT.TH1F("h_had_b_4vec_pt", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 1000)
-h_had_b_4vec_eta = ROOT.TH1F("h_had_b_4vec_eta", "b-quark from t_{Hadronic}; #eta; Events", 100, -5, 5)
-h_had_b_4vec_phi = ROOT.TH1F("h_had_b_4vec_phi", "b-quark from t_{Hadronic}; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_had_b_4vec_pt = ROOT.TH1F("h_had_b_4vec_pt", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 600)
+h_had_b_4vec_eta = ROOT.TH1F("h_had_b_4vec_eta", "b-quark from t_{Hadronic}; #eta; Events", 50, -5, 5)
+h_had_b_4vec_phi = ROOT.TH1F("h_had_b_4vec_phi", "b-quark from t_{Hadronic}; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_had_b_4vec_mass = ROOT.TH1F("h_had_b_4vec_mass", "b-quark from t_{Hadronic}; Mass; Events", 50, 0, 10)
 
-h_lepton_pt = ROOT.TH1F("h_lepton_pt", "Lepton; pT (GeV); Events", 50, 0, 1000)
+h_lepton_pt = ROOT.TH1F("h_lepton_pt", "Lepton; pT (GeV); Events", 50, 0, 600)
 h_lepton_eta = ROOT.TH1F("h_lepton_eta", "Lepton; #eta; Events", 100, -5, 5)
-h_lepton_phi = ROOT.TH1F("h_lepton_phi", "Lepton; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_lepton_phi = ROOT.TH1F("h_lepton_phi", "Lepton; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_lepton_mass = ROOT.TH1F("h_lepton_mass", "Lepton; Mass; Events", 50, 0, 10)
+
+h_Sphi = ROOT.TH1F("h_Sphi", "Angular Variable; #Sigma#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_Dphi = ROOT.TH1F("h_Dphi", "Angular Variable; #Delta#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 #-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
 
 # ctu1 weighted histograms
 h_ttbarMass_weight_ctu1 = ROOT.TH1F("h_ttbarMass_weight_ctu1", "ttbar system; Mass (GeV);Events", 150, 0, 3000)
 
-h_had_b_4vec_pt_weight_ctu1  = ROOT.TH1F("h_had_b_4vec_pt_weight_ctu1", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 1000)
-h_had_b_4vec_eta_weight_ctu1 = ROOT.TH1F("h_had_b_4vec_eta_weight_ctu1", "b-quark from t_{Hadronic}; #eta; Events", 100, -5, 5)
-h_had_b_4vec_phi_weight_ctu1 = ROOT.TH1F("h_had_b_4vec_phi_weight_ctu1", "b-quark from t_{Hadronic}; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_had_b_4vec_pt_weight_ctu1  = ROOT.TH1F("h_had_b_4vec_pt_weight_ctu1", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 600)
+h_had_b_4vec_eta_weight_ctu1 = ROOT.TH1F("h_had_b_4vec_eta_weight_ctu1", "b-quark from t_{Hadronic}; #eta; Events", 50, -5, 5)
+h_had_b_4vec_phi_weight_ctu1 = ROOT.TH1F("h_had_b_4vec_phi_weight_ctu1", "b-quark from t_{Hadronic}; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_had_b_4vec_mass_weight_ctu1 = ROOT.TH1F("h_had_b_4vec_mass_weight_ctu1", "b-quark from t_{Hadronic}; Mass; Events", 50, 0, 10)
 
-h_lepton_pt_weight_ctu1  = ROOT.TH1F("h_lepton_pt_weight_ctu1", "Lepton; pT (GeV); Events", 50, 0, 1000)
+h_lepton_pt_weight_ctu1  = ROOT.TH1F("h_lepton_pt_weight_ctu1", "Lepton; pT (GeV); Events", 50, 0, 600)
 h_lepton_eta_weight_ctu1 = ROOT.TH1F("h_lepton_eta_weight_ctu1", "Lepton; #eta; Events", 100, -5, 5)
-h_lepton_phi_weight_ctu1 = ROOT.TH1F("h_lepton_phi_weight_ctu1", "Lepton; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_lepton_phi_weight_ctu1 = ROOT.TH1F("h_lepton_phi_weight_ctu1", "Lepton; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_lepton_mass_weight_ctu1 = ROOT.TH1F("h_lepton_mass_weight_ctu1", "Lepton; Mass; Events", 50, 0, 10)
+
+h_Sphi_weight_ctu1 = ROOT.TH1F("h_Sphi_weight_ctu1", "Angular Variable; #Sigma#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_Dphi_weight_ctu1 = ROOT.TH1F("h_Dphi_weight_ctu1", "Angular Variable; #Delta#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 #-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
 
 # cQj11 weighted histograms
 h_ttbarMass_weight_cQj11 = ROOT.TH1F("h_ttbarMass_weight_cQj11", "ttbar system; Mass (GeV);Events", 150, 0, 3000)
 
-h_had_b_4vec_pt_weight_cQj11  = ROOT.TH1F("h_had_b_4vec_pt_weight_cQj11", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 1000)
-h_had_b_4vec_eta_weight_cQj11 = ROOT.TH1F("h_had_b_4vec_eta_weight_cQj11", "b-quark from t_{Hadronic}; #eta; Events", 100, -5, 5)
-h_had_b_4vec_phi_weight_cQj11 = ROOT.TH1F("h_had_b_4vec_phi_weight_cQj11", "b-quark from t_{Hadronic}; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_had_b_4vec_pt_weight_cQj11  = ROOT.TH1F("h_had_b_4vec_pt_weight_cQj11", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 600)
+h_had_b_4vec_eta_weight_cQj11 = ROOT.TH1F("h_had_b_4vec_eta_weight_cQj11", "b-quark from t_{Hadronic}; #eta; Events", 50, -5, 5)
+h_had_b_4vec_phi_weight_cQj11 = ROOT.TH1F("h_had_b_4vec_phi_weight_cQj11", "b-quark from t_{Hadronic}; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_had_b_4vec_mass_weight_cQj11 = ROOT.TH1F("h_had_b_4vec_mass_weight_cQj11", "b-quark from t_{Hadronic}; Mass; Events", 50, 0, 10)
 
-h_lepton_pt_weight_cQj11  = ROOT.TH1F("h_lepton_pt_weight_cQj11", "Lepton; pT (GeV); Events", 50, 0, 1000)
+h_lepton_pt_weight_cQj11  = ROOT.TH1F("h_lepton_pt_weight_cQj11", "Lepton; pT (GeV); Events", 50, 0, 600)
 h_lepton_eta_weight_cQj11 = ROOT.TH1F("h_lepton_eta_weight_cQj11", "Lepton; #eta; Events", 100, -5, 5)
-h_lepton_phi_weight_cQj11 = ROOT.TH1F("h_lepton_phi_weight_cQj11", "Lepton; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_lepton_phi_weight_cQj11 = ROOT.TH1F("h_lepton_phi_weight_cQj11", "Lepton; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_lepton_mass_weight_cQj11 = ROOT.TH1F("h_lepton_mass_weight_cQj11", "Lepton; Mass; Events", 50, 0, 10)
+
+h_Sphi_weight_cQj11 = ROOT.TH1F("h_Sphi_weight_cQj11", "Angular Variable; #Sigma#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_Dphi_weight_cQj11 = ROOT.TH1F("h_Dphi_weight_cQj11", "Angular Variable; #Delta#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 #-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
 
 # ctu1 (quadratic) weighted histograms
 h_ttbarMass_weight_ctu1_quad = ROOT.TH1F("h_ttbarMass_weight_ctu1_quad", "ttbar system; Mass (GeV);Events", 150, 0, 3000)
 
-h_had_b_4vec_pt_weight_ctu1_quad  = ROOT.TH1F("h_had_b_4vec_pt_weight_ctu1_quad", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 1000)
-h_had_b_4vec_eta_weight_ctu1_quad = ROOT.TH1F("h_had_b_4vec_eta_weight_ctu1_quad", "b-quark from t_{Hadronic}; #eta; Events", 100, -5, 5)
-h_had_b_4vec_phi_weight_ctu1_quad = ROOT.TH1F("h_had_b_4vec_phi_weight_ctu1_quad", "b-quark from t_{Hadronic}; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_had_b_4vec_pt_weight_ctu1_quad  = ROOT.TH1F("h_had_b_4vec_pt_weight_ctu1_quad", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 600)
+h_had_b_4vec_eta_weight_ctu1_quad = ROOT.TH1F("h_had_b_4vec_eta_weight_ctu1_quad", "b-quark from t_{Hadronic}; #eta; Events", 50, -5, 5)
+h_had_b_4vec_phi_weight_ctu1_quad = ROOT.TH1F("h_had_b_4vec_phi_weight_ctu1_quad", "b-quark from t_{Hadronic}; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_had_b_4vec_mass_weight_ctu1_quad = ROOT.TH1F("h_had_b_4vec_mass_weight_ctu1_quad", "b-quark from t_{Hadronic}; Mass; Events", 50, 0, 10)
 
-h_lepton_pt_weight_ctu1_quad  = ROOT.TH1F("h_lepton_pt_weight_ctu1_quad", "Lepton; pT (GeV); Events", 50, 0, 1000)
+h_lepton_pt_weight_ctu1_quad  = ROOT.TH1F("h_lepton_pt_weight_ctu1_quad", "Lepton; pT (GeV); Events", 50, 0, 600)
 h_lepton_eta_weight_ctu1_quad = ROOT.TH1F("h_lepton_eta_weight_ctu1_quad", "Lepton; #eta; Events", 100, -5, 5)
-h_lepton_phi_weight_ctu1_quad = ROOT.TH1F("h_lepton_phi_weight_ctu1_quad", "Lepton; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_lepton_phi_weight_ctu1_quad = ROOT.TH1F("h_lepton_phi_weight_ctu1_quad", "Lepton; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_lepton_mass_weight_ctu1_quad = ROOT.TH1F("h_lepton_mass_weight_ctu1_quad", "Lepton; Mass; Events", 50, 0, 10)
+
+h_Sphi_weight_ctu1_quad = ROOT.TH1F("h_Sphi_weight_ctu1_quad", "Angular Variable; #Sigma#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_Dphi_weight_ctu1_quad = ROOT.TH1F("h_Dphi_weight_ctu1_quad", "Angular Variable; #Delta#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 #-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
 
 # cQj11 (quadratic) weighted histograms
 h_ttbarMass_weight_cQj11_quad = ROOT.TH1F("h_ttbarMass_weight_cQj11_quad", "ttbar system; Mass (GeV);Events", 150, 0, 3000)
 
-h_had_b_4vec_pt_weight_cQj11_quad  = ROOT.TH1F("h_had_b_4vec_pt_weight_cQj11_quad", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 1000)
-h_had_b_4vec_eta_weight_cQj11_quad = ROOT.TH1F("h_had_b_4vec_eta_weight_cQj11_quad", "b-quark from t_{Hadronic}; #eta; Events", 100, -5, 5)
-h_had_b_4vec_phi_weight_cQj11_quad = ROOT.TH1F("h_had_b_4vec_phi_weight_cQj11_quad", "b-quark from t_{Hadronic}; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_had_b_4vec_pt_weight_cQj11_quad  = ROOT.TH1F("h_had_b_4vec_pt_weight_cQj11_quad", "b-quark from t_{Hadronic}; pT (GeV); Events", 50, 0, 600)
+h_had_b_4vec_eta_weight_cQj11_quad = ROOT.TH1F("h_had_b_4vec_eta_weight_cQj11_quad", "b-quark from t_{Hadronic}; #eta; Events", 50, -5, 5)
+h_had_b_4vec_phi_weight_cQj11_quad = ROOT.TH1F("h_had_b_4vec_phi_weight_cQj11_quad", "b-quark from t_{Hadronic}; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_had_b_4vec_mass_weight_cQj11_quad = ROOT.TH1F("h_had_b_4vec_mass_weight_cQj11_quad", "b-quark from t_{Hadronic}; Mass; Events", 50, 0, 10)
 
-h_lepton_pt_weight_cQj11_quad  = ROOT.TH1F("h_lepton_pt_weight_cQj11_quad", "Lepton; pT (GeV); Events", 50, 0, 1000)
+h_lepton_pt_weight_cQj11_quad  = ROOT.TH1F("h_lepton_pt_weight_cQj11_quad", "Lepton; pT (GeV); Events", 50, 0, 600)
 h_lepton_eta_weight_cQj11_quad = ROOT.TH1F("h_lepton_eta_weight_cQj11_quad", "Lepton; #eta; Events", 100, -5, 5)
-h_lepton_phi_weight_cQj11_quad = ROOT.TH1F("h_lepton_phi_weight_cQj11_quad", "Lepton; #phi; Events", 30, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_lepton_phi_weight_cQj11_quad = ROOT.TH1F("h_lepton_phi_weight_cQj11_quad", "Lepton; #phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 h_lepton_mass_weight_cQj11_quad = ROOT.TH1F("h_lepton_mass_weight_cQj11_quad", "Lepton; Mass; Events", 50, 0, 10)
+
+h_Sphi_weight_cQj11_quad = ROOT.TH1F("h_Sphi_weight_cQj11_quad", "Angular Variable; #Sigma#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
+h_Dphi_weight_cQj11_quad = ROOT.TH1F("h_Dphi_weight_cQj11_quad", "Angular Variable; #Delta#phi; Events", 12, -ROOT.TMath.Pi(), ROOT.TMath.Pi())
 #-*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------#
 
 ## Define useful functions -*--*---*-----*--------*-------------*---------------------*----------------------------------*-------------------------------------------------------*
-
-# Calculate deltaR distance between two particles
-# Input eta and phi of two particles
-def deltaR(eta1, phi1, eta2, phi2):
-    deta = eta1 - eta2
-    dphi = abs(phi1 - phi2)
-    if dphi > ROOT.TMath.Pi():
-        dphi = 2 * ROOT.TMath.Pi() - dphi
-    return (deta * deta + dphi * dphi) ** 0.5        
 
 # Functions checking status flags of particles
 #FLAGS = ['isPrompt', 'isDecayedLeptonHadron', 'isTauDecayProduct', 'isPromptTauDecayProduct', 'isDirectTauDecayProduct', 'isDirectPromptTauDecayProduct', 'isDirectHadronDecayProduct', 
@@ -148,6 +156,7 @@ def process_event(entry, histograms):
     
     top_4vec = ROOT.TLorentzVector()
     antitop_4vec = ROOT.TLorentzVector()
+    hadronictop = ROOT.TLorentzVector()
     tops = [] # list of (4vector, pdgId) tuples
     
     w_bosons = [] # list of 4vectors
@@ -160,6 +169,9 @@ def process_event(entry, histograms):
     had_b_4vec = ROOT.TLorentzVector()
     lep_b_4vec = ROOT.TLorentzVector()
     b_quarks = [] # list of (4vector, from_hadronically_decaying_top_boolean) tuples
+
+    Sphi = None
+    Dphi = None
 
     ## Linear EFT weights
     # ctu1
@@ -235,6 +247,7 @@ def process_event(entry, histograms):
                         elif entry.GenPart_genPartIdxMother[Wdaughter_index] == Wboson_index and abs(entry.GenPart_pdgId[Wdaughter_index]) in [1, 2, 3, 4]:
                             from_hadronic_Wdecay = True # Now that we know this top quark (with index i) has decayed hadronically
                             w_quarks_indices.append(Wdaughter_index)
+                            hadronictop.SetPtEtaPhiM(entry.GenPart_pt[top_index], entry.GenPart_eta[top_index], entry.GenPart_phi[top_index], entry.GenPart_mass[top_index])
 
             # 4th loop over all particles
             for l in range(entry.nGenPart):
@@ -255,7 +268,9 @@ def process_event(entry, histograms):
         
     # Check the event for correct number of decay products
     if len(w_quarks_indices) == 2 and len(b_quarks) == 2 and len(leptons) == 1:
-        ## Filling lab frame histograms #-*--*---*-----*--------*-------------*---------------------*----------------------------------*
+        ## Filling lab-frame histograms #-*--*---*-----*--------*-------------*---------------------*----------------------------------*
+
+        histograms['h_hadronictopPt'].Fill(hadronictop.Pt())
    
         # Hadronic b quarks
         histograms['h_had_b_4vec_pt'].Fill(had_b_4vec.Pt())
@@ -336,22 +351,79 @@ def process_event(entry, histograms):
             histograms['h_ttbarMass_weight_cQj11'].Fill(ttbar.M(), weight_cQj11) # linear effects of cQj11
             histograms['h_ttbarMass_weight_ctu1_quad'].Fill(ttbar.M(), weight_ctu1_quad) # quadratic effects of ctu1
             histograms['h_ttbarMass_weight_cQj11_quad'].Fill(ttbar.M(), weight_cQj11_quad) # quadratic effects of cQj11
-        ## Done filling lab frame histograms #-*--*---*-----*--------*-------------*---------------------*----------------------------------*
+        ## Done filling lab-frame histograms #-*--*---*-----*--------*-------------*---------------------*----------------------------------*
+            
+        ## Setup spin correlation variables
+        ttbar = top_4vec + antitop_4vec
 
         ## Boost to CM frame
+        leptons[0][0].Boost(-ttbar.BoostVector())
+        had_b_4vec.Boost(-ttbar.BoostVector())
+        top_4vec.Boost(-ttbar.BoostVector())
+        antitop_4vec.Boost(-ttbar.BoostVector())
 
+        print "angle between top quarks: ", top_4vec.Angle(antitop_4vec.Vect())
 
-        ## Rotate away theta and phi
+        ## Rotate away phi and theta
+        leptons[0][0].RotateZ(-top_4vec.Phi())
+        had_b_4vec.RotateZ(-top_4vec.Phi())
+        top_4vec.RotateZ(-top_4vec.Phi())
+        antitop_4vec.RotateZ(-top_4vec.Phi())
 
+        leptons[0][0].RotateY(-top_4vec.Theta())
+        had_b_4vec.RotateY(-top_4vec.Theta())
+        top_4vec.RotateY(-top_4vec.Theta())
+        antitop_4vec.RotateY(-top_4vec.Theta())
 
-        ## Boost to parent top quark rest frame
-        
+        print "phi and theta of top quark are: ", top_4vec.Phi(), ",", top_4vec.Theta()
 
-        ## Construct Spin Correlation variables
+        ## Boost to parent top quark rest frame (which top is parent is charge dependent)
+        # Positive lepton means top is parent of lepton
+        if leptons[0][1] in [11, 13]:
+            leptons[0][0].Boost(-top_4vec.BoostVector())
+            had_b_4vec.Boost(-antitop_4vec.BoostVector())
+        # Negative lepton means antitop is parent of lepton
+        elif leptons[0][1] in [-11, -13]:
+            leptons[0][0].Boost(-antitop_4vec.BoostVector())
+            had_b_4vec.Boost(-top_4vec.BoostVector())
+
+        ## Construct Spin Correlation variables: Top +- Antitop
+        if leptons[0][1] in [11, 13]:
+            Sphi = leptons[0][0].Phi() + had_b_4vec.Phi()
+            if Sphi > ROOT.TMath.Pi(): Sphi -= 2*ROOT.TMath.Pi()
+            if Sphi < -ROOT.TMath.Pi(): Sphi += 2*ROOT.TMath.Pi()
+            Dphi = leptons[0][0].Phi() - had_b_4vec.Phi()
+            if Dphi > ROOT.TMath.Pi(): Dphi -= 2*ROOT.TMath.Pi()
+            if Dphi < -ROOT.TMath.Pi(): Dphi += 2*ROOT.TMath.Pi()
+        elif leptons[0][1] in [-11, -13]:
+            Sphi = had_b_4vec.Phi() + leptons[0][0].Phi()
+            if Sphi > ROOT.TMath.Pi(): Sphi -= 2*ROOT.TMath.Pi()
+            if Sphi < -ROOT.TMath.Pi(): Sphi += 2*ROOT.TMath.Pi()
+            Dphi = had_b_4vec.Phi() - leptons[0][0].Phi()
+            if Dphi > ROOT.TMath.Pi(): Dphi -= 2*ROOT.TMath.Pi()
+            if Dphi < -ROOT.TMath.Pi(): Dphi += 2*ROOT.TMath.Pi()
+
+        print "Sphi and Dphi are: ", Sphi, ",", Dphi
+
+        ## Filling top quark rest-frame histograms #-*--*---*-----*--------*-------------*---------------------*----------------------------------*
+        histograms['h_Sphi'].Fill(Sphi)
+        histograms['h_Dphi'].Fill(Dphi)
+
+        # linear effects of ctu1
+        histograms['h_Sphi_weight_ctu1'].Fill(Sphi, weight_ctu1)
+        histograms['h_Dphi_weight_ctu1'].Fill(Dphi, weight_ctu1)
+        # linear effects of cQj11
+        histograms['h_Sphi_weight_cQj11'].Fill(Sphi, weight_cQj11)
+        histograms['h_Dphi_weight_cQj11'].Fill(Dphi, weight_cQj11)
+        # quadratic effects of ctu1
+        histograms['h_Sphi_weight_ctu1_quad'].Fill(Sphi, weight_ctu1_quad)
+        histograms['h_Dphi_weight_ctu1_quad'].Fill(Dphi, weight_ctu1_quad)
+        # quadratic effects of cQj11
+        histograms['h_Sphi_weight_cQj11_quad'].Fill(Sphi, weight_cQj11_quad)
+        histograms['h_Dphi_weight_cQj11_quad'].Fill(Dphi, weight_cQj11_quad)
             
 
     return tops, leptons, b_quarks, is_last_copy_particles
-    ## Done filling histograms #-*--*---*-----*--------*-------------*---------------------*----------------------------------*
 ## End of processing particles ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*
 
 # Main function that reads the input file, fills the histograms, and returns the number of events processed.
@@ -389,6 +461,8 @@ def analyze(filename):
         'h_antitopEta': h_antitopEta,
         'h_antitopPhi': h_antitopPhi,
         'h_antitopMass': h_antitopMass,
+        # hadronic top quark
+        'h_hadronictopPt': h_hadronictopPt,
         # ttbar system
         'h_ttbarPt': h_ttbarPt,
         'h_ttbarEta': h_ttbarEta,
@@ -447,7 +521,23 @@ def analyze(filename):
         "h_lepton_pt_weight_cQj11_quad" : h_lepton_pt_weight_cQj11_quad,
         "h_lepton_eta_weight_cQj11_quad" : h_lepton_eta_weight_cQj11_quad,
         "h_lepton_phi_weight_cQj11_quad" : h_lepton_phi_weight_cQj11_quad,
-        "h_lepton_mass_weight_cQj11_quad" : h_lepton_mass_weight_cQj11_quad
+        "h_lepton_mass_weight_cQj11_quad" : h_lepton_mass_weight_cQj11_quad,
+
+        # Spin correlation variables
+        'h_Sphi': h_Sphi,
+        'h_Dphi': h_Dphi,
+        # linear effects of ctu1
+        'h_Sphi_weight_ctu1': h_Sphi_weight_ctu1,
+        'h_Dphi_weight_ctu1': h_Dphi_weight_ctu1,
+        # linear effects of cQj11
+        'h_Sphi_weight_cQj11': h_Sphi_weight_cQj11,
+        'h_Dphi_weight_cQj11': h_Dphi_weight_cQj11,
+        # quadratic effects of ctu1
+        'h_Sphi_weight_ctu1_quad': h_Sphi_weight_ctu1_quad,
+        'h_Dphi_weight_ctu1_quad': h_Dphi_weight_ctu1_quad,
+        # quadratic effects of cQj11
+        'h_Sphi_weight_cQj11_quad': h_Sphi_weight_cQj11_quad,
+        'h_Dphi_weight_cQj11_quad': h_Dphi_weight_cQj11_quad
     }
     
     # Executes process_event, which processes the particles in each event

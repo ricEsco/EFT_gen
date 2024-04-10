@@ -46,13 +46,19 @@ histograms_to_overlay = [
     ('h_ttbarMass', 'h_ttbarMass_weight_cQj11'),
     ('h_ttbarMass', 'h_ttbarMass_weight_ctu1_quad'),
     ('h_ttbarMass', 'h_ttbarMass_weight_cQj11_quad'),
+
+    ('h_Sphi', 'h_Sphi_weight_ctu1'),
+    ('h_Sphi', 'h_Sphi_weight_cQj11'),
+    ('h_Sphi', 'h_Sphi_weight_ctu1_quad'),
+    ('h_Sphi', 'h_Sphi_weight_cQj11_quad'),
+
+    ('h_Dphi', 'h_Dphi_weight_ctu1'),
+    ('h_Dphi', 'h_Dphi_weight_cQj11'),
+    ('h_Dphi', 'h_Dphi_weight_ctu1_quad'),
+    ('h_Dphi', 'h_Dphi_weight_cQj11_quad'),
 ]
 
-counter = 0
-total = len(histograms_to_overlay)
-
 for hist_names in histograms_to_overlay:
-    print "Plotting histogram", hist_names[1], "({}/{})".format(counter+1, total)
 
     hist1 = file1.Get(hist_names[0]) #EFT SM
     hist2 = file1.Get(hist_names[1]) #EFT c*
@@ -61,34 +67,45 @@ for hist_names in histograms_to_overlay:
     
     pad1 = ROOT.TPad("pad1", "The pad with the histogram", 0,  0.3, 1, 1.0)
     pad2 = ROOT.TPad("pad2", "The pad with the ratio"    , 0, 0.05, 1, 0.3)
-    pad1.SetLogy()
     pad1.SetBottomMargin(0) 
     pad2.SetTopMargin(0)  
     pad2.SetBottomMargin(0.33)
 
     pad1.Draw()
     pad2.Draw()
-    
-    ROOT.gStyle.SetOptStat("iorme")
   
-    # Normalizing histograms
+    # # Normalizing histograms
     # if hist1.Integral() > 0:
     #     hist1.Scale(1.0 / hist1.Integral())
     # if hist2.Integral() > 0:
     #     hist2.Scale(1.0 / hist2.Integral())
         
     hist1.SetLineColor(ROOT.kRed)
+    hist1.GetYaxis().SetTitleOffset(0.3)
     hist2.SetLineColor(ROOT.kGreen-2)
     
-    hist1.SetLineWidth(3)
-    hist2.SetLineWidth(3)    
+    hist1.SetLineWidth(2)
+    hist2.SetLineWidth(2)    
     
     pad1.cd()
     hist1.Draw("hist")
-    hist2.Draw("histsame")
+    hist2.Draw("hist same")
+
+    ROOT.gStyle.SetOptStat("iorm")
+    st = hist1.FindObject("stats")
+    st.SetX1NDC(0.75)
+    st.SetX2NDC(0.90)
+    st.SetY1NDC(0.70)
+    st.SetY2NDC(0.80)
+
+    if "phi" in hist_names[0]:
+        hist1.SetMinimum(hist1.GetMinimum()*0.8)
+        hist1.SetMaximum(hist1.GetMaximum()*1.2)
+    else:
+        pad1.SetLogy()
 
     # Syntax for TLegend: x1, y1, x2, y2
-    legend = ROOT.TLegend(0.75, 0.8, 0.9, 0.9)
+    legend = ROOT.TLegend(0.75, 0.80, 0.90, 0.90)
     legend.AddEntry(hist1, "SM")
     if "ctu1" in hist_names[1]:
         if "quad" in hist_names[1]:
@@ -100,20 +117,20 @@ for hist_names in histograms_to_overlay:
             legend.AddEntry(hist2, "EFT: cQj11 (quad)")
         else:
             legend.AddEntry(hist2, "EFT: cQj11")
-
     legend.Draw()
     
     pad2.cd()
     # ROOT.gStyle.SetOptStat("0")
-    
+
     ratio = hist1.Clone("ratio")
     ratio.Divide(hist2)
     ratio.SetLineColor(ROOT.kBlack)
-    ratio.SetMinimum(0.8) 
-    ratio.SetMaximum(1.2)
+    ratio.SetLineWidth(1)
+    ratio.SetMinimum(0.5) 
+    ratio.SetMaximum(1.5)
     ratio.GetYaxis().SetTitle("SM/EFT") 
     ratio.GetYaxis().SetTitleSize(0.1) 
-    ratio.GetYaxis().SetTitleOffset(0.5)
+    ratio.GetYaxis().SetTitleOffset(0.3)
     ratio.GetYaxis().SetLabelSize(0.05) 
     ratio.GetYaxis().CenterTitle(True)
     ratio.GetYaxis().SetNdivisions(505)
@@ -124,6 +141,8 @@ for hist_names in histograms_to_overlay:
     ratio.GetXaxis().SetLabelSize(0.1) 
 
     ratio.Draw("hist")
+    # Disable statistics box only for ratio plot
+    ratio.SetStats(0)
     
     # ROOT TLine syntax: x1, y1, x2, y2
     line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1, ratio.GetXaxis().GetXmax(), 1)
