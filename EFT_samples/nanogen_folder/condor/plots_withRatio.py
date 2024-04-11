@@ -12,6 +12,16 @@ print "Input files:", Infilename
 print "Output file is:", Outfilename
 
 histograms_to_overlay = [
+    ('h_ttbarMass', 'h_ttbarMass_weight_ctu1'),
+    ('h_ttbarMass', 'h_ttbarMass_weight_cQj11'),
+    ('h_ttbarMass', 'h_ttbarMass_weight_ctu1_quad'),
+    ('h_ttbarMass', 'h_ttbarMass_weight_cQj11_quad'),
+
+    ('h_Deta', 'h_Deta_weight_ctu1'),
+    ('h_Deta', 'h_Deta_weight_cQj11'),
+    ('h_Deta', 'h_Deta_weight_ctu1_quad'),
+    ('h_Deta', 'h_Deta_weight_cQj11_quad'),
+
     ('h_had_b_4vec_pt',   'h_had_b_4vec_pt_weight_ctu1'),
     ('h_had_b_4vec_pt',   'h_had_b_4vec_pt_weight_cQj11'),
     ('h_had_b_4vec_pt',   'h_had_b_4vec_pt_weight_ctu1_quad'),
@@ -42,11 +52,6 @@ histograms_to_overlay = [
     ('h_lepton_phi',      'h_lepton_phi_weight_ctu1_quad'),
     ('h_lepton_phi',      'h_lepton_phi_weight_cQj11_quad'),
 
-    ('h_ttbarMass', 'h_ttbarMass_weight_ctu1'),
-    ('h_ttbarMass', 'h_ttbarMass_weight_cQj11'),
-    ('h_ttbarMass', 'h_ttbarMass_weight_ctu1_quad'),
-    ('h_ttbarMass', 'h_ttbarMass_weight_cQj11_quad'),
-
     ('h_Sphi', 'h_Sphi_weight_ctu1'),
     ('h_Sphi', 'h_Sphi_weight_cQj11'),
     ('h_Sphi', 'h_Sphi_weight_ctu1_quad'),
@@ -56,6 +61,12 @@ histograms_to_overlay = [
     ('h_Dphi', 'h_Dphi_weight_cQj11'),
     ('h_Dphi', 'h_Dphi_weight_ctu1_quad'),
     ('h_Dphi', 'h_Dphi_weight_cQj11_quad'),
+
+    ('h_xi_kk', 'h_xi_kk_weight_ctu1'),
+    ('h_xi_kk', 'h_xi_kk_weight_cQj11'),
+    ('h_xi_kk', 'h_xi_kk_weight_ctu1_quad'),
+    ('h_xi_kk', 'h_xi_kk_weight_cQj11_quad'),
+
 ]
 
 for hist_names in histograms_to_overlay:
